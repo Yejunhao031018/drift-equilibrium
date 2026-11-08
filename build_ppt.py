@@ -1165,7 +1165,7 @@ def slide_thanks(prs, d):
     lines = [
         "race_drift_model.py      模型（单轨 + 刷子胎 + 摩擦圆 + 载荷转移）",
         "race_drift_solver.py     求解器 / 延拓 / 稳定性 / 控制 / 设计优化",
-        "build_figs.py + figs/    11 张 200 dpi 结果图",
+        "build_figs.py + figs/    12 张 300 dpi 结果图",
         "results.json             全量数值结果（本 PPT 全部数字来源）",
         "verify/                  40 项独立校验报告",
         "大作业_答辩PPT.pptx/.pdf  本答辩材料",
@@ -1182,10 +1182,17 @@ def slide_thanks(prs, d):
     qr = s.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(8.85), Inches(3.35), Inches(3.5), Inches(2.55))
     qr.fill.solid(); qr.fill.fore_color.rgb = WHITE
     qr.line.color.rgb = RGBColor(0xC9, 0xD6, 0xEA); qr.line.width = Pt(1.0); qr.shadow.inherit = False
-    tf = qr.text_frame; tf.word_wrap = True
-    tf.margin_left = Inches(0.1); tf.margin_right = Inches(0.1)
-    add_para(tf, "二维码占位", size=16, bold=True, color=GRAY, align=PP_ALIGN.CENTER, first=True, space_after=4)
-    add_para(tf, "（代码仓库 / 结果文件链接）", size=11, color=GRAY, align=PP_ALIGN.CENTER, space_after=0)
+    qr_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'figs', 'qr_repo.png')
+    if os.path.isfile(qr_path):
+        s.shapes.add_picture(qr_path, Inches(9.62), Inches(3.45), Inches(1.95), Inches(1.95))
+        tb = add_textbox(s, 8.95, 5.42, 3.3, 0.42, "qr_cap")
+        add_para(tb.text_frame, "扫码查看代码与全部结果", size=10.5, color=RGBColor(0x4A, 0x56, 0x68),
+                 align=PP_ALIGN.CENTER, first=True)
+    else:
+        tf = qr.text_frame; tf.word_wrap = True
+        tf.margin_left = Inches(0.1); tf.margin_right = Inches(0.1)
+        add_para(tf, "二维码占位", size=16, bold=True, color=GRAY, align=PP_ALIGN.CENTER, first=True, space_after=4)
+        add_para(tf, "（代码仓库 / 结果文件链接）", size=11, color=GRAY, align=PP_ALIGN.CENTER, space_after=0)
 
     tb = add_textbox(s, 0.95, 6.65, 11.6, 0.4, "thanks_foot")
     add_para(tb.text_frame, "非线性优化方法 · 2026 秋 · 基于非线性优化的赛车漂移平衡点求解与稳定性设计",
