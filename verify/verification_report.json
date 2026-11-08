@@ -1,0 +1,1132 @@
+{
+  "generated_at": "2026-11-04T23:19:11+08:00",
+  "script": {
+    "path": "D:\\University_documents\\博一课程\\非线性优化方法（秋）\\大作业\\verify_reference.py",
+    "sha256": "100f00ac53f8830b40304d12451b789fc67d4cdda96328290acff1b93c1e013b"
+  },
+  "environment": {
+    "python": "3.13.11",
+    "numpy": "2.2.6",
+    "scipy": "1.17.0",
+    "mpmath": "1.3.0",
+    "platform": "Windows-11-10.0.26200-SP0"
+  },
+  "main_model": {
+    "path": "D:\\University_documents\\博一课程\\非线性优化方法（秋）\\大作业\\race_drift_model.py",
+    "sha256": "714d782c9524e4e8034bc47115a5c7b90da3de55f3bfbdfec93c5ca6a18e64ac",
+    "lines": 384
+  },
+  "output_dir": "D:\\University_documents\\博一课程\\非线性优化方法（秋）\\大作业\\verify",
+  "summary": {
+    "total": 40,
+    "passed": 40,
+    "failed": 0,
+    "all_pass": true,
+    "elapsed_sec": 14.824741840362549,
+    "max_errors": {
+      "A": 0.0,
+      "B1": 1.720054968983149e-10,
+      "B2": 1.720054968983149e-10,
+      "B3": 7.760343138061039e-16,
+      "B4": 1.9415820570654525e-16,
+      "B5": 1.9415820570654525e-16,
+      "C1": 4.3790577010150533e-47,
+      "C2": 3.637978807091713e-12,
+      "C3": 4.547473508864641e-12,
+      "C4": 4.1074775580796086e-07,
+      "C5": 4.3532190374673263e-07,
+      "C6": 4.382405040814774e-05,
+      "D1": 4.547473508864641e-12,
+      "D2": 4.547473508864641e-12,
+      "D3": 5.4569682106375694e-12,
+      "E1": 0.0,
+      "E2": 0.0,
+      "E3": 0.0,
+      "E4": 0.0,
+      "E5": 0.0,
+      "E6": 1.4814821591713212e-07,
+      "E7": 0.0,
+      "E8": 0.0,
+      "F1": 0.0,
+      "F2": 0.0,
+      "F3": 0.0,
+      "G1": 3.637978807091713e-12,
+      "G2": 0.0,
+      "G3": 2.361053145584951e-16,
+      "H1": 0.0,
+      "H2": 0.0,
+      "H3": 2.1902376013251936e-10,
+      "H4": 2.57255371746583e-15,
+      "H5": 0.0,
+      "H6": 5.130598807376188e-06,
+      "J1": 0.0,
+      "J2": 1552949.6543606205,
+      "I1": 0.0,
+      "I2": 0.0,
+      "I3": 1.8189894035458565e-11
+    }
+  },
+  "checks": [
+    {
+      "item": "A",
+      "name": "残差函数 独立实现 vs 主模型（相对误差）",
+      "metric": 0.0,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 4,
+      "detail": "一般工况 V=12,δ=0.05,z=(0.10,0.30,2000): 0.00e+00；高速工况 V=20,δ=-0.02,z=(-0.20,1.00,5000): 0.00e+00；低速大转角 V=6,δ=0.20,z=(0.05,0.20,100): 0.00e+00；极端点 V=40,δ=0.10,z=(1.10,5.00,9000)（触发 Fz_min 钳位）: 0.00e+00"
+    },
+    {
+      "item": "B1",
+      "name": "独立解析雅可比 vs 中心差分（最大相对误差）",
+      "metric": 1.720054968983149e-10,
+      "threshold": 1e-05,
+      "passed": true,
+      "n_points": 13,
+      "detail": "13 点，最大 1.72e-10"
+    },
+    {
+      "item": "B2",
+      "name": "主模型解析雅可比 vs 中心差分（最大相对误差）",
+      "metric": 1.720054968983149e-10,
+      "threshold": 1e-05,
+      "passed": true,
+      "n_points": 13,
+      "detail": "13 点，最大 1.72e-10"
+    },
+    {
+      "item": "B3",
+      "name": "独立雅可比 vs 主模型雅可比（最大相对误差）",
+      "metric": 7.760343138061039e-16,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 13,
+      "detail": "两者公式应等价"
+    },
+    {
+      "item": "B4",
+      "name": "独立雅可比 vs mpmath 50 位高精度微分（2 点）",
+      "metric": 1.9415820570654525e-16,
+      "threshold": 1e-09,
+      "passed": true,
+      "n_points": 2,
+      "detail": "参考点 (2)(3) 处，最大 1.94e-16"
+    },
+    {
+      "item": "B5",
+      "name": "主模型雅可比 vs mpmath 50 位高精度微分（2 点）",
+      "metric": 1.9415820570654525e-16,
+      "threshold": 1e-09,
+      "passed": true,
+      "n_points": 2,
+      "detail": "参考点 (2)(3) 处，最大 1.94e-16"
+    },
+    {
+      "item": "C1",
+      "name": "mpmath 50 位牛顿解残差（∞-范数）",
+      "metric": 4.3790577010150533e-47,
+      "threshold": 1e-40,
+      "passed": true,
+      "n_points": 4,
+      "detail": "4 个参考点"
+    },
+    {
+      "item": "C2",
+      "name": "主模型在双精度解处的残差（∞-范数）",
+      "metric": 3.637978807091713e-12,
+      "threshold": 1e-09,
+      "passed": true,
+      "n_points": 4,
+      "detail": "双精度解即高精度解"
+    },
+    {
+      "item": "C3",
+      "name": "高精度解与双精度解之差（∞-范数）",
+      "metric": 4.547473508864641e-12,
+      "threshold": 1e-08,
+      "passed": true,
+      "n_points": 4,
+      "detail": "双精度解与 50 位解一致"
+    },
+    {
+      "item": "C4",
+      "name": "与给定参考值 β 之差（°）",
+      "metric": 4.1074775580796086e-07,
+      "threshold": 1e-05,
+      "passed": true,
+      "n_points": 4,
+      "detail": "参考值仅给到 6 位小数"
+    },
+    {
+      "item": "C5",
+      "name": "与给定参考值 r 之差",
+      "metric": 4.3532190374673263e-07,
+      "threshold": 1e-05,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "C6",
+      "name": "与给定参考值 fx 之差（N）",
+      "metric": 4.382405040814774e-05,
+      "threshold": 0.001,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "D1",
+      "name": "scipy root(hybr) 求解成功且解正确",
+      "metric": 4.547473508864641e-12,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "4/4 成功"
+    },
+    {
+      "item": "D2",
+      "name": "scipy least_squares(trf,x_scale) 求解成功且解正确",
+      "metric": 4.547473508864641e-12,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "4/4 成功"
+    },
+    {
+      "item": "D3",
+      "name": "两种 scipy 方法解之差（∞-范数）",
+      "metric": 5.4569682106375694e-12,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "解一致"
+    },
+    {
+      "item": "E1",
+      "name": "侧向力随滑移角单调（非增，符合符号约定）",
+      "metric": 0.0,
+      "threshold": 1e-12,
+      "passed": true,
+      "n_points": 4001,
+      "detail": "Fy = -M·Φ(C·tanα/M)，α>0 时 Fy<0（|Fy| 随 |α| 单调增）"
+    },
+    {
+      "item": "E2",
+      "name": "非饱和区严格单调（|α|<0.9α_sat）",
+      "metric": 0.0,
+      "threshold": 1e-12,
+      "passed": true,
+      "n_points": 657,
+      "detail": "α_sat = 10.460°"
+    },
+    {
+      "item": "E3",
+      "name": "奇函数性 |Fy(-α)+Fy(α)|/M",
+      "metric": 0.0,
+      "threshold": 1e-14,
+      "passed": true,
+      "n_points": 4001,
+      "detail": ""
+    },
+    {
+      "item": "E4",
+      "name": "摩擦圆约束 |Fy|<=M（最大越界量）",
+      "metric": 0.0,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 4001,
+      "detail": ""
+    },
+    {
+      "item": "E5",
+      "name": "|u|=3 处 C0 连续（Φ 跃变）",
+      "metric": 0.0,
+      "threshold": 1e-12,
+      "passed": true,
+      "n_points": 2,
+      "detail": ""
+    },
+    {
+      "item": "E6",
+      "name": "|u|=3 处 C1 连续（斜率跳变，数值差分）",
+      "metric": 1.4814821591713212e-07,
+      "threshold": 1e-05,
+      "passed": true,
+      "n_points": 2,
+      "detail": "左斜率=1.481e-07, 右斜率=0.000e+00"
+    },
+    {
+      "item": "E7",
+      "name": "大 |u| 饱和：|Fy(±10)|=M（最大偏差）",
+      "metric": 0.0,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 2,
+      "detail": ""
+    },
+    {
+      "item": "E8",
+      "name": "峰值滑移角 |Fy(α_peak)|-M 及各轴峰值角",
+      "metric": 0.0,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 2,
+      "detail": "α_peak=10.460°（M=8000 N, C=130000 N/rad）"
+    },
+    {
+      "item": "F1",
+      "name": "前轴摩擦圆 |Fyf|<=Mf（最大越界量 N）",
+      "metric": 0.0,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "F2",
+      "name": "后轴摩擦圆 |Fyr|<=Mr（最大越界量 N）",
+      "metric": 0.0,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "F3",
+      "name": "后轴总摩擦圆 Fyr²+fx²<=(mu_r·Fzr)²（最大越界量 N）",
+      "metric": 0.0,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "(1) V=8, δ=0.10, 漂移解: 侧向利用率=1.0000, 总利用率=1.0000；(2) V=15, δ=0.10, 抓地解: 侧向利用率=0.5596, 总利用率=0.5634；(3) V=15, δ=0.10, 漂移解: 侧向利用率=1.0000, 总利用率=1.0000；(4) V=22, δ=0.10, 抓地解: 侧向利用率=0.8324, 总利用率=0.8410"
+    },
+    {
+      "item": "G1",
+      "name": "平衡方程 e1,e2,e3 残差（∞-范数，N 或 N·m）",
+      "metric": 3.637978807091713e-12,
+      "threshold": 1e-08,
+      "passed": true,
+      "n_points": 4,
+      "detail": "独立重算力/力矩"
+    },
+    {
+      "item": "G2",
+      "name": "稳态关系 ax=-r·vy、ay=r·vx 恒等式误差（m/s²）",
+      "metric": 0.0,
+      "threshold": 1e-09,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "G3",
+      "name": "向心加速度 = V²/R（R=V/r）相对误差",
+      "metric": 2.361053145584951e-16,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "V²/R = r·V"
+    },
+    {
+      "item": "H1",
+      "name": "独立 dynamics vs 主模型 dynamics（最大偏差）",
+      "metric": 0.0,
+      "threshold": 1e-10,
+      "passed": true,
+      "n_points": 4,
+      "detail": "n_iter=3 准静态载荷迭代"
+    },
+    {
+      "item": "H2",
+      "name": "独立中心差分线性化 vs 主 dynamics_jac（相对误差）",
+      "metric": 0.0,
+      "threshold": 1e-08,
+      "passed": true,
+      "n_points": 4,
+      "detail": "h=1e-6"
+    },
+    {
+      "item": "H3",
+      "name": "主 dynamics_jac vs 另一步长中心差分（相对误差，h=5e-6）",
+      "metric": 2.1902376013251936e-10,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 4,
+      "detail": "验证主模型 jac 是动力学导数"
+    },
+    {
+      "item": "H4",
+      "name": "迹/行列式/特征多项式 vs numpy eigvals（最大相对误差）",
+      "metric": 2.57255371746583e-15,
+      "threshold": 1e-08,
+      "passed": true,
+      "n_points": 4,
+      "detail": ""
+    },
+    {
+      "item": "H5",
+      "name": "特征值实部符号分类 vs diagnose.is_stable（不一致数）",
+      "metric": 0,
+      "threshold": 0,
+      "passed": true,
+      "n_points": 4,
+      "detail": "4/4 一致"
+    },
+    {
+      "item": "H6",
+      "name": "特征值与给定参考特征值的最近距离",
+      "metric": 5.130598807376188e-06,
+      "threshold": 0.0001,
+      "passed": true,
+      "n_points": 4,
+      "detail": "参考值保留 5 位小数"
+    },
+    {
+      "item": "J1",
+      "name": "同一初值重复 10 次的最大解偏差（确定性）",
+      "metric": 0.0,
+      "threshold": 1e-12,
+      "passed": true,
+      "n_points": 40,
+      "detail": "4 个工况 × 10 次"
+    },
+    {
+      "item": "J2",
+      "name": "1e-7 扰动后一次牛顿步残差下降倍数（取最小）",
+      "metric": 1552949.6543606205,
+      "threshold": 1000.0,
+      "passed": true,
+      "n_points": 4,
+      "detail": "(1) V=8, δ=0.10, 漂移解: 残差 1.89e-03→1.40e-10, 下降 1.35e+07 倍；(2) V=15, δ=0.10, 抓地解: 残差 1.78e-02→9.93e-09, 下降 1.80e+06 倍；(3) V=15, δ=0.10, 漂移解: 残差 2.78e-03→2.29e-10, 下降 1.21e+07 倍；(4) V=22, δ=0.10, 抓地解: 残差 1.06e-02→6.80e-09, 下降 1.55e+06 倍"
+    },
+    {
+      "item": "I1",
+      "name": "每个 delta 物理可行平衡点个数与主模型一致（最大差）",
+      "metric": 0,
+      "threshold": 0,
+      "passed": true,
+      "n_points": 29,
+      "detail": "29 个 delta 工况"
+    },
+    {
+      "item": "I2",
+      "name": "两套实现解集不匹配个数",
+      "metric": 0,
+      "threshold": 0,
+      "passed": true,
+      "n_points": 29,
+      "detail": "去重容差 1e-5"
+    },
+    {
+      "item": "I3",
+      "name": "两套实现对应解的最大偏差（∞-范数）",
+      "metric": 1.8189894035458565e-11,
+      "threshold": 1e-06,
+      "passed": true,
+      "n_points": 29,
+      "detail": ""
+    }
+  ],
+  "details": {
+    "cases": [
+      {
+        "name": "(1) V=8, δ=0.10, 漂移解",
+        "V": 8.0,
+        "delta": 0.1,
+        "z0_given": [
+          -0.4216547223078408,
+          1.462424,
+          7816.4409
+        ],
+        "z_double": [
+          -0.4216547294767411,
+          1.462424123122013,
+          7816.4409438240455
+        ],
+        "z_mp": [
+          -0.42165472947674154,
+          1.4624241231220128,
+          7816.44094382405
+        ],
+        "beta_deg": -24.159036410747756,
+        "double_iters": 3,
+        "mp_iters": 3,
+        "mp_residual": 4.3790577010150533e-47,
+        "main_residual_at_double": 3.637978807091713e-12,
+        "diff_mp_double": 4.547473508864641e-12,
+        "diff_beta_deg": 4.1074775580796086e-07,
+        "diff_r": 1.231220128072863e-07,
+        "diff_fx": 4.382405040814774e-05,
+        "diagnostics": {
+          "Fzf": 6455.024570779382,
+          "Fzr": 7828.275429220619,
+          "Mf": 8391.531942013196,
+          "Mr": 7112.630089386472,
+          "af_deg": -18.036120594308308,
+          "ar_deg": -35.71737540311061,
+          "uf": -5.04439316083298,
+          "ur": -15.163859875675099,
+          "Fyf": 8391.531942013196,
+          "Fyr": 7112.630089386472,
+          "sx_f": 1.0,
+          "sx_r": 1.0,
+          "fx_frac": 0.7396209174082328
+        },
+        "traction": {
+          "name": "(1) V=8, δ=0.10, 漂移解",
+          "Fyf_over_Mf": 1.0,
+          "Fyr_over_Mr": 1.0,
+          "total_rear": 1.0
+        },
+        "self_consistency": {
+          "e1": -9.094947017729282e-13,
+          "e2": -1.8189894035458565e-12,
+          "e3": 3.637978807091713e-12,
+          "ax": 4.7882200353280435,
+          "ay": 10.674677752053743,
+          "a_mag": 11.699392984976102,
+          "V2_over_R": 11.699392984976102,
+          "R": 5.470369281738486,
+          "centripetal_rel": 0.0
+        },
+        "eigenvalues": [
+          [
+            -0.01840951100413213,
+            1.457086329506392
+          ],
+          [
+            -0.01840951100413213,
+            -1.457086329506392
+          ],
+          [
+            0.019094360269936578,
+            0.0
+          ]
+        ],
+        "is_stable": false,
+        "main_is_stable": false,
+        "main_max_real": 0.019094360269936578,
+        "eig_ref_dist": 4.360269936578426e-06,
+        "scipy": {
+          "root": {
+            "success": true,
+            "status": 1,
+            "message": "The solution converged.",
+            "nfev": 5,
+            "njev": 1,
+            "diff": 4.547473508864641e-12,
+            "res_norm": 3.637978807091713e-12
+          },
+          "least_squares": {
+            "success": true,
+            "status": 3,
+            "message": "`xtol` termination condition is satisfied.",
+            "nfev": 3,
+            "njev": 3,
+            "nit": -1,
+            "diff": 4.547473508864641e-12,
+            "res_norm": 3.637978807091713e-12
+          }
+        }
+      },
+      {
+        "name": "(2) V=15, δ=0.10, 抓地解",
+        "V": 15.0,
+        "delta": 0.1,
+        "z0_given": [
+          0.0022428004486902734,
+          0.501572,
+          704.428
+        ],
+        "z_double": [
+          0.0022428018781052617,
+          0.5015718918263085,
+          704.4280124745819
+        ],
+        "z_mp": [
+          0.002242801878105265,
+          0.5015718918263085,
+          704.4280124745819
+        ],
+        "beta_deg": 0.1285030818994462,
+        "double_iters": 3,
+        "mp_iters": 3,
+        "mp_residual": 2.1895288505075267e-47,
+        "main_residual_at_double": 1.8189894035458565e-12,
+        "diff_mp_double": 3.469446951953614e-18,
+        "diff_beta_deg": 8.189944619707568e-08,
+        "diff_r": 1.0817369155979861e-07,
+        "diff_fx": 1.2474581922106154e-05,
+        "diagnostics": {
+          "Fzf": 7768.321583089378,
+          "Fzr": 6662.897166910622,
+          "Mf": 10098.818058016192,
+          "Mr": 8967.285443617024,
+          "af_deg": -3.399112110135539,
+          "ar_deg": -2.4564128238901173,
+          "uf": -0.7645846679461359,
+          "ur": -0.7175880331359236,
+          "Fyf": 5920.692762116508,
+          "Fyr": 5018.356335987401,
+          "sx_f": 0.586275812486473,
+          "sx_r": 0.5596293736316269,
+          "fx_frac": 0.078314059888289
+        },
+        "traction": {
+          "name": "(2) V=15, δ=0.10, 抓地解",
+          "Fyf_over_Mf": 0.586275812486473,
+          "Fyr_over_Mr": 0.5596293736316269,
+          "total_rear": 0.5633802758148307
+        },
+        "self_consistency": {
+          "e1": 8.171241461241152e-14,
+          "e2": -3.637978807091713e-12,
+          "e3": 9.094947017729282e-13,
+          "ax": -0.016873881568496434,
+          "ay": 7.5235594550000595,
+          "a_mag": 7.523578377394628,
+          "V2_over_R": 7.523578377394626,
+          "R": 29.905982062476532,
+          "centripetal_rel": 2.361053145584951e-16
+        },
+        "eigenvalues": [
+          [
+            -0.10989206594663131,
+            0.0
+          ],
+          [
+            -7.462692156708398,
+            3.6642019740940266
+          ],
+          [
+            -7.462692156708398,
+            -3.6642019740940266
+          ]
+        ],
+        "is_stable": true,
+        "main_is_stable": true,
+        "main_max_real": -0.10989206594663131,
+        "eig_ref_dist": 2.9237712526514973e-06,
+        "scipy": {
+          "root": {
+            "success": true,
+            "status": 1,
+            "message": "The solution converged.",
+            "nfev": 5,
+            "njev": 1,
+            "diff": 3.469446951953614e-18,
+            "res_norm": 1.8189894035458565e-12
+          },
+          "least_squares": {
+            "success": true,
+            "status": 3,
+            "message": "`xtol` termination condition is satisfied.",
+            "nfev": 4,
+            "njev": 4,
+            "nit": -1,
+            "diff": 3.410605131648481e-13,
+            "res_norm": 9.094947017729282e-13
+          }
+        }
+      },
+      {
+        "name": "(3) V=15, δ=0.10, 漂移解",
+        "V": 15.0,
+        "delta": 0.1,
+        "z0_given": [
+          -0.4179631764069476,
+          0.787591,
+          7924.2553
+        ],
+        "z_double": [
+          -0.4179631732518991,
+          0.7875914353219038,
+          7924.255276819944
+        ],
+        "z_mp": [
+          -0.4179631732518988,
+          0.7875914353219038,
+          7924.25527681994
+        ],
+        "beta_deg": -23.94752581922902,
+        "double_iters": 3,
+        "mp_iters": 3,
+        "mp_residual": 4.3790577010150533e-47,
+        "main_residual_at_double": 3.637978807091713e-12,
+        "diff_mp_double": 3.637978807091713e-12,
+        "diff_beta_deg": 1.8077097863056224e-07,
+        "diff_r": 4.3532190374673263e-07,
+        "diff_fx": 2.318005954293767e-05,
+        "diagnostics": {
+          "Fzf": 6512.357734207429,
+          "Fzr": 7918.861015792571,
+          "Mf": 8466.065054469658,
+          "Mr": 7175.804067865815,
+          "af_deg": -26.439293891476296,
+          "ar_deg": -27.55066638040774,
+          "uf": -7.6356279118220165,
+          "ur": -10.905220388224006,
+          "Fyf": 8466.065054469658,
+          "Fyr": 7175.804067865815,
+          "sx_f": 1.0,
+          "sx_r": 1.0,
+          "fx_frac": 0.7412453270570295
+        },
+        "traction": {
+          "name": "(3) V=15, δ=0.10, 漂移解",
+          "Fyf_over_Mf": 1.0,
+          "Fyr_over_Mr": 1.0,
+          "total_rear": 1.0
+        },
+        "self_consistency": {
+          "e1": 9.094947017729282e-13,
+          "e2": 1.8189894035458565e-12,
+          "e3": 1.8189894035458565e-12,
+          "ax": 4.795248144799126,
+          "ay": 10.796904915441937,
+          "a_mag": 11.813871529828557,
+          "V2_over_R": 11.813871529828557,
+          "R": 19.045407716843965,
+          "centripetal_rel": 0.0
+        },
+        "eigenvalues": [
+          [
+            -0.07687723346603034,
+            0.7942756791975378
+          ],
+          [
+            -0.07687723346603034,
+            -0.7942756791975378
+          ],
+          [
+            0.12060453746393712,
+            0.0
+          ]
+        ],
+        "is_stable": false,
+        "main_is_stable": false,
+        "main_max_real": 0.12060453746393712,
+        "eig_ref_dist": 5.130598807376188e-06,
+        "scipy": {
+          "root": {
+            "success": true,
+            "status": 1,
+            "message": "The solution converged.",
+            "nfev": 5,
+            "njev": 1,
+            "diff": 3.637978807091713e-12,
+            "res_norm": 3.637978807091713e-12
+          },
+          "least_squares": {
+            "success": true,
+            "status": 3,
+            "message": "`xtol` termination condition is satisfied.",
+            "nfev": 4,
+            "njev": 4,
+            "nit": -1,
+            "diff": 1.8189894035458565e-12,
+            "res_norm": 1.8189894035458565e-12
+          }
+        }
+      },
+      {
+        "name": "(4) V=22, δ=0.10, 抓地解",
+        "V": 22.0,
+        "delta": 0.1,
+        "z0_given": [
+          -0.05024066387547333,
+          0.521577,
+          2031.1755
+        ],
+        "z_double": [
+          -0.0502406630288504,
+          0.5215770711002953,
+          2031.1754658239072
+        ],
+        "z_mp": [
+          -0.050240663028850344,
+          0.5215770711002952,
+          2031.1754658239058
+        ],
+        "beta_deg": -2.878577951492076,
+        "double_iters": 3,
+        "mp_iters": 3,
+        "mp_residual": 2.7369110631344083e-48,
+        "main_residual_at_double": 3.637978807091713e-12,
+        "diff_mp_double": 1.3642420526593924e-12,
+        "diff_beta_deg": 4.850792389987646e-08,
+        "diff_r": 7.11002952069606e-08,
+        "diff_fx": 3.417609423195245e-05,
+        "diagnostics": {
+          "Fzf": 7708.697753217964,
+          "Fzr": 6960.477246782036,
+          "Mf": 10021.307079183354,
+          "Mr": 9174.489087202548,
+          "af_deg": -7.046248114183922,
+          "ar_deg": -4.706505609993012,
+          "uf": -1.6034354599127254,
+          "ur": -1.3460577123767956,
+          "Fyf": 9010.324578491105,
+          "Fyr": 7637.1163400158985,
+          "sx_f": 0.8991167027710086,
+          "sx_r": 0.8324296064255912,
+          "fx_frac": 0.21615966345187224
+        },
+        "traction": {
+          "name": "(4) V=22, δ=0.10, 抓地解",
+          "Fyf_over_Mf": 0.8991167027710086,
+          "Fyr_over_Mr": 0.8324296064255912,
+          "total_rear": 0.8410032536147571
+        },
+        "self_consistency": {
+          "e1": 1.1368683772161603e-13,
+          "e2": 0.0,
+          "e3": 0.0,
+          "ax": 0.576253819088262,
+          "ay": 11.46021683159644,
+          "a_mag": 11.474695564206494,
+          "V2_over_R": 11.474695564206494,
+          "R": 42.17976828158839,
+          "centripetal_rel": 0.0
+        },
+        "eigenvalues": [
+          [
+            -0.12779318468764345,
+            0.0
+          ],
+          [
+            -2.3715000893193796,
+            3.524573584814459
+          ],
+          [
+            -2.3715000893193796,
+            -3.524573584814459
+          ]
+        ],
+        "is_stable": true,
+        "main_is_stable": true,
+        "main_max_real": -0.12779318468764345,
+        "eig_ref_dist": 3.585927028569161e-06,
+        "scipy": {
+          "root": {
+            "success": true,
+            "status": 1,
+            "message": "The solution converged.",
+            "nfev": 5,
+            "njev": 1,
+            "diff": 1.3642420526593924e-12,
+            "res_norm": 3.637978807091713e-12
+          },
+          "least_squares": {
+            "success": true,
+            "status": 3,
+            "message": "`xtol` termination condition is satisfied.",
+            "nfev": 3,
+            "njev": 3,
+            "nit": -1,
+            "diff": 1.3642420526593924e-12,
+            "res_norm": 3.637978807091713e-12
+          }
+        }
+      }
+    ],
+    "branch_table": [
+      {
+        "delta": 0.02,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-12
+      },
+      {
+        "delta": 0.03,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-12
+      },
+      {
+        "delta": 0.04,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 3.637978807091713e-12
+      },
+      {
+        "delta": 0.05,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 3.637978807091713e-12
+      },
+      {
+        "delta": 0.06,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 5.4569682106375694e-12
+      },
+      {
+        "delta": 0.07,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 5.551115123125783e-17
+      },
+      {
+        "delta": 0.08,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-12
+      },
+      {
+        "delta": 0.09,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 3.637978807091713e-12
+      },
+      {
+        "delta": 0.1,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 5.4569682106375694e-12
+      },
+      {
+        "delta": 0.11,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 3.637978807091713e-12
+      },
+      {
+        "delta": 0.12,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 2.7284841053187847e-12
+      },
+      {
+        "delta": 0.13,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 6.366462912410498e-12
+      },
+      {
+        "delta": 0.14,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-12
+      },
+      {
+        "delta": 0.15,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 3.637978807091713e-12
+      },
+      {
+        "delta": 0.16,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.2732925824820995e-11
+      },
+      {
+        "delta": 0.17,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 4.547473508864641e-12
+      },
+      {
+        "delta": 0.18,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 8.185452315956354e-12
+      },
+      {
+        "delta": 0.19,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 8.185452315956354e-12
+      },
+      {
+        "delta": 0.2,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.2732925824820995e-11
+      },
+      {
+        "delta": 0.21,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 2.7284841053187847e-12
+      },
+      {
+        "delta": 0.22,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 0.0
+      },
+      {
+        "delta": 0.23,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 4.547473508864641e-13
+      },
+      {
+        "delta": 0.24,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-11
+      },
+      {
+        "delta": 0.25,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 2.2737367544323206e-12
+      },
+      {
+        "delta": 0.26,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.3877787807814457e-17
+      },
+      {
+        "delta": 0.27,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 4.547473508864641e-12
+      },
+      {
+        "delta": 0.28,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 1.8189894035458565e-12
+      },
+      {
+        "delta": 0.29,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 7.275957614183426e-12
+      },
+      {
+        "delta": 0.3,
+        "n_indep": 2,
+        "n_main": 2,
+        "grip_indep": true,
+        "drift_indep": true,
+        "grip_main": true,
+        "drift_main": true,
+        "max_match_dist": 6.366462912410498e-12
+      }
+    ],
+    "notes": [
+      "主模型 dynamics 内部实际循环 3 次（代码 range(3)），任务说明写“两步准静态迭代”；参考特征值按 3 次迭代生成（本脚本 H 项与主模型对齐用 n_iter=3）。若按 2 次迭代实现，特征值偏差可达 1e-3 量级（例如参考点 (3) 的 +0.1206 → +0.1246）。",
+      "符号约定：Fy=-M·Φ(C·tanα/M)，故 Fy 关于 α 单调递减、|Fy| 随 |α| 单调增；E 项按此约定检验（与说明中“单调增”在绝对值意义下一致）。",
+      "mpmath 高精度：dps=50，mp 牛顿停止阈值 1e-42（可达残差下限约 1e-47），mp 数值微分用中心差分 h=1e-20。"
+    ]
+  }
+}

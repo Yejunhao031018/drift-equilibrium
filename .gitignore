@@ -1,0 +1,23 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.ipynb_checkpoints/
+
+# 报告与答辩成品（保留在本地，不入库）
+大作业_研究报告.docx
+大作业_研究报告.pdf
+大作业_答辩PPT.pptx
+大作业_答辩PPT.pdf
+大作业要求.png
+build_figs_v1.py
+
+# Office 临时文件
+~$*
+.dsh-office-*/
+_chk_*/
+_pptchk_*/
+
+# 本地开发草稿
+_scratch/
+*.log

@@ -1,0 +1,60 @@
+{
+ "n_checks": 9,
+ "checks": [
+  {
+   "item": "表 3 抓地解 κ 量级 < 0.05",
+   "value": 0.01,
+   "expect": "<0.05",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "item": "漂移解最大正实部 > 0",
+   "value": 0.39569414513642925,
+   "expect": ">0",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "item": "设计优化 κ 降幅",
+   "value": 0.3001289028087819,
+   "expect": ">0.2",
+   "ok": true,
+   "note": ""
+  },
+  {
+   "item": "drift_growth[V=6] κ ∈ (0,1)",
+   "value": 0.7475691378420385,
+   "ok": true
+  },
+  {
+   "item": "drift_growth[V=8] κ ∈ (0,1)",
+   "value": 0.7396209174082321,
+   "ok": true
+  },
+  {
+   "item": "drift_growth[V=10] κ ∈ (0,1)",
+   "value": 0.7399902670275692,
+   "ok": true
+  },
+  {
+   "item": "fold[V=6] 折叠点 max Re",
+   "value": -0.5766789544323536,
+   "ok": true,
+   "note": "折叠点稳定性（参考）"
+  },
+  {
+   "item": "fold[V=8] 折叠点 max Re",
+   "value": -0.061153900924765255,
+   "ok": true,
+   "note": "折叠点稳定性（参考）"
+  },
+  {
+   "item": "fold[V=10] 折叠点 max Re",
+   "value": -0.032945837333208695,
+   "ok": true,
+   "note": "折叠点稳定性（参考）"
+  }
+ ],
+ "generated": "auto"
+}

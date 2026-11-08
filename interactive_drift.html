@@ -1,0 +1,1986 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>赛车稳态漂移平衡点的非线性优化求解 · 交互演示</title>
+<style>
+:root{
+  --bg:#070b10; --panel:#0e1520; --line:#1d2a3a; --txt:#cfdae7; --dim:#7e93aa;
+  --cyan:#38bdf8; --green:#3ddc84; --orange:#ffa94d; --red:#ff5d6c; --purple:#c084fc;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#070b10;color:var(--txt);
+  font-family:"Microsoft YaHei","Segoe UI",sans-serif;line-height:1.55}
+body{background:radial-gradient(1200px 620px at 18% -12%,#12233a 0%,#070b10 62%) fixed,#070b10}
+.wrap{max-width:1520px;margin:0 auto;padding:18px 20px 30px}
+header h1{font-size:23px;margin:4px 0 8px;letter-spacing:.5px;color:#eaf3ff;font-weight:600}
+header h1 .sub{font-size:12.5px;color:var(--dim);font-weight:400;margin-left:10px;letter-spacing:0}
+.intro{font-size:13.5px;color:#a9bacd;max-width:1180px;margin:0 0 14px}
+.hl{color:var(--cyan)}
+.panel{background:linear-gradient(180deg,#0f1723,#0c131d);border:1px solid var(--line);
+  border-radius:12px;box-shadow:0 6px 24px rgba(0,0,0,.25)}
+.statusbar{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.badge{font-size:12.5px;padding:5px 12px;border-radius:999px;border:1px solid}
+.badge.good{color:#9cf0c2;border-color:#1f6b45;background:#0d2a1d}
+.badge.bad{color:#ffc2c8;border-color:#7a2933;background:#2a0f13}
+.chk summary{cursor:pointer;font-size:12px;color:var(--dim)}
+#checkTable{margin-top:8px;font-size:11.5px}
+#checkTable table{border-collapse:collapse}
+#checkTable th,#checkTable td{padding:3px 10px;border-bottom:1px solid var(--line);text-align:left;color:#a9bacd}
+#checkTable th{color:var(--dim);font-weight:500}
+.controls{padding:14px 16px;margin-bottom:14px;display:grid;grid-template-columns:1fr 1fr auto;
+  gap:14px 20px;align-items:start}
+.ctl{display:flex;flex-direction:column;gap:6px;min-width:220px}
+.ctl label{font-size:12.5px;color:var(--dim);display:flex;justify-content:space-between;gap:8px}
+.ctl label .val{color:var(--cyan);font-variant-numeric:tabular-nums}
+input[type=range]{-webkit-appearance:none;appearance:none;height:6px;border-radius:3px;
+  background:#1b2a3c;outline:none;margin:0}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;
+  border-radius:50%;background:var(--cyan);border:2px solid #071018;cursor:pointer;
+  box-shadow:0 0 10px rgba(56,189,248,.7)}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:var(--cyan);
+  border:2px solid #071018;cursor:pointer}
+.btns{display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end}
+button{background:#14283c;color:#d8ecff;border:1px solid #26445f;border-radius:8px;
+  padding:6px 11px;font-size:12.5px;cursor:pointer;font-family:inherit;transition:.15s}
+button:hover{background:#1b3850;border-color:#3a6a8f}
+button.ghost{background:transparent;color:var(--dim)}
+button.on{background:#1f4c6e;border-color:var(--cyan);color:#e8f7ff}
+.readouts{grid-column:1 / -1;display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px}
+.ro{background:#0a111a;border:1px solid #172333;border-radius:8px;padding:7px 10px;
+  display:flex;flex-direction:column;gap:1px;min-width:0}
+.ro .k{font-size:11px;color:var(--dim)}
+.ro .v{font-size:13.5px;color:#e6f1ff;font-variant-numeric:tabular-nums;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ro.wide{grid-column:span 2}
+.ro .v.small{font-size:11.5px;white-space:normal;color:var(--orange)}
+.ro .v.good{color:var(--green)}
+.ro .v.bad{color:var(--red)}
+.panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.panel{padding:12px 14px}
+.panel h2{font-size:13.5px;margin:0 0 8px;color:#cfe6ff;font-weight:600;letter-spacing:.3px}
+.panel h2 .tag{font-size:10.5px;color:var(--dim);font-weight:400;margin-left:6px}
+canvas{display:block;width:100%;background:#0a1018;border:1px solid #15202e;border-radius:8px}
+#cvA{height:430px}
+#cvB{height:380px}
+#cvC{height:470px}
+#cvD{height:430px}
+.cap{font-size:11.5px;color:var(--dim);margin:7px 0 0;line-height:1.55}
+.frow{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:12px;
+  color:var(--dim);margin-bottom:8px}
+.frow input[type=number]{width:66px;background:#0a111a;border:1px solid #223549;border-radius:6px;
+  color:#e6f1ff;padding:3px 6px;font-family:inherit;font-size:12px}
+.brow{display:flex;gap:8px;align-items:center;margin-top:9px;flex-wrap:wrap}
+.nb{font-size:12px;color:var(--dim)}
+.nb b{color:#dceaf8;font-weight:600}
+.nb .g{color:var(--green)}
+.nb .o{color:var(--orange)}
+.nb .r{color:var(--red)}
+footer{margin-top:16px;font-size:11.5px;color:var(--dim);text-align:center;line-height:1.75}
+footer code{color:#9fc4e2;background:#0c141e;border:1px solid #1a2837;border-radius:4px;padding:0 4px}
+@media (max-width:1120px){
+  .panels{grid-template-columns:1fr}
+  .controls{grid-template-columns:1fr}
+  #cvA{height:390px}
+  #cvC{height:520px}
+  .ro.wide{grid-column:span 1}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>赛车稳态漂移平衡点的非线性优化求解<span class="sub">Newton · Armijo · Continuation · Phase Portrait</span></h1>
+    <p class="intro">
+      赛车可以以两种截然不同的稳态过弯：轮胎侧偏很小的<span class="hl">抓地平衡点</span>，和车身侧偏角很大、后轮接近摩擦极限的<span class="hl">漂移平衡点</span>。
+      把平衡条件写成三个未知数 β、r、f<sub>x</sub> 的三个非线性方程，就能用<span class="hl">阻尼牛顿法 + Armijo 回溯</span>实时求解；再对三自由度动力学线性化，用特征值判断平衡点是否稳定。
+      页面下半部分依次展示牛顿迭代路径与残差、随前轮转角变化的平衡点支路、以及相平面上的扰动轨迹。
+      颜色约定：<span class="hl">绿色</span> = 稳定的抓地平衡点，<span class="hl">橙色</span> = 不稳定的漂移平衡点，<span class="hl">红色</span> = 发散/失败提示。
+    </p>
+  </header>
+
+  <section class="statusbar">
+    <div id="selfcheck" class="badge bad">自检运行中…</div>
+    <details class="chk">
+      <summary>自检明细（4 个参考真值点）</summary>
+      <div id="checkTable"></div>
+    </details>
+  </section>
+
+  <section class="controls panel">
+    <div class="ctl">
+      <label for="sV">车速 V <span class="val" id="vVal">8.0 m/s</span></label>
+      <input id="sV" type="range" min="5" max="30" step="0.1" value="8">
+    </div>
+    <div class="ctl">
+      <label for="sD">前轮转角 δ <span class="val" id="dVal">+5.73° (0.100 rad)</span></label>
+      <input id="sD" type="range" min="-0.20" max="0.30" step="0.005" value="0.10">
+    </div>
+    <div class="btns">
+      <button id="btnGrip">载入抓地平衡点</button>
+      <button id="btnDrift">载入漂移平衡点</button>
+      <button id="btnDefault" class="ghost">恢复默认工况</button>
+    </div>
+    <div class="readouts">
+      <div class="ro"><span class="k">平衡点类型</span><span class="v" id="roKind">—</span></div>
+      <div class="ro"><span class="k">β 车身侧偏角</span><span class="v" id="roBeta">—</span></div>
+      <div class="ro"><span class="k">r 横摆角速度 (rad/s)</span><span class="v" id="roR">—</span></div>
+      <div class="ro"><span class="k">f<sub>x</sub> 后轴驱动力 (N)</span><span class="v" id="roFx">—</span></div>
+      <div class="ro"><span class="k">κ = f<sub>x</sub>/(μ<sub>r</sub>F<sub>zr</sub>)</span><span class="v" id="roK">—</span></div>
+      <div class="ro"><span class="k">稳定性</span><span class="v" id="roStab">—</span></div>
+      <div class="ro wide"><span class="k">线性化特征值</span><span class="v" id="roEig">—</span></div>
+      <div class="ro wide"><span class="k">提示</span><span class="v small" id="roNote">—</span></div>
+    </div>
+  </section>
+
+  <section class="panels">
+    <div class="panel">
+      <h2>A · 车辆俯视图、轮胎力与摩擦圆<span class="tag">车身坐标 x 向前、y 向左</span></h2>
+      <canvas id="cvA"></canvas>
+      <p class="cap">速度矢量与车身轴的夹角即 β；前轮按 δ 转动。右侧两个摩擦圆分别显示前轴（无纵向力）与后轴的力利用率：
+        圆心到实心点的向量 = (纵向力, 侧向力) / 该轴极限 μF<sub>z</sub>。漂移点时后轴圆几乎被 f<sub>x</sub> 占满。</p>
+    </div>
+    <div class="panel">
+      <h2>B · 牛顿迭代<span class="tag">初值不同 → 收敛到不同平衡点</span></h2>
+      <div class="frow">
+        <span>初值 β<sub>0</sub></span><input id="inB0" type="number" step="0.5" value="-17.2">°
+        <span>r<sub>0</sub></span><input id="inR0" type="number" step="0.05" value="1.00">rad/s
+        <span>f<sub>x0</sub></span><input id="inF0" type="number" step="100" value="5000">N
+        <button id="btnRand">随机初值</button>
+        <button id="btnSeedGrip" class="ghost">抓地初值</button>
+        <button id="btnSeedDrift" class="ghost">漂移初值</button>
+      </div>
+      <canvas id="cvB"></canvas>
+      <div class="brow">
+        <button id="btnStep">单步</button>
+        <button id="btnRun">运行</button>
+        <button id="btnResetN" class="ghost">重置</button>
+        <span id="nbStatus" class="nb">—</span>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>C · 平衡点支路（固定 V，随 δ 变化）<span class="tag">延拓 + 逐点牛顿</span></h2>
+      <canvas id="cvC"></canvas>
+      <p class="cap">绿 = 抓地支路（稳定，且只在左转 δ&gt;0 存在）；橙 = 漂移支路（不稳定，反打 δ&lt;0 时仍保持 r&gt;0 的左漂）。
+        颜色区分稳定性，虚线为当前 δ，点击曲线任意点可把该平衡点载入为当前工况。</p>
+    </div>
+    <div class="panel">
+      <h2>D · 相平面 (β, r) 与扰动轨迹<span class="tag">真实三维动力学 RK4</span></h2>
+      <canvas id="cvD"></canvas>
+      <p class="cap">箭头是冻结车速后的 (β̇, ṙ) 投影场；彩色曲线是把 f<sub>x</sub> 固定为当前平衡点值、用三自由度动力学 RK4 积分后再投影得到的真实轨迹。
+        抓地平衡点附近的扰动会收敛；漂移平衡点附近的扰动先沿小振荡缓慢外扩，最终发散。</p>
+    </div>
+    <div class="panel">
+      <h2>E · 漂移轨迹（世界坐标）<span class="tag">稳态漂移圆：车身与速度方向相差 |β|</span></h2>
+      <canvas id="cvE" style="height:420px"></canvas>
+      <p class="cap">把当前平衡点 (β, r) 与车速 V 代入稳态转弯几何：质心轨迹是半径 R = V/|r| 的圆，箭头为速度方向（圆切线），虚线为车身航向。
+        两者夹角即 |β|——漂移时车身始终"横着走"。切换滑条或用按钮载入抓地/漂移点，可直接看到 R 与 |β| 的变化（抓地点的 R 大、|β| 近 0）。</p>
+    </div>
+  </section>
+
+  <footer>
+    数值模型与 Python 参考实现 <code>race_drift_model.py</code> 完全一致：参数、平衡残差、解析雅可比、三自由度准静态动力学与线性化特征值全部由页内 JavaScript 重算。
+    加载时用 4 个参考真值自检（平衡点量归一化误差 &lt; 1e-6，特征值绝对误差 &lt; 1e-4）；所有曲线与轨迹均为实时数值计算，未硬编码。
+  </footer>
+</div>
+<script>
+'use strict';
+/* =====================================================================
+ * 一、数学核心（与 Python 参考实现 race_drift_model.py 完全一致）
+ * 分层：model / residual / jacobian / newton / continuation / 特征值 / 自检
+ * ===================================================================== */
+
+/* ---------------- 模型参数 ---------------- */
+const P = {
+  m: 1450.0, Iz: 2200.0, a: 1.15, b: 1.35, L: 2.50, h: 0.45,
+  mu_f: 1.30, mu_r: 1.35, Caf: 130000.0, Car: 150000.0,
+  rho: 1.225, CdA: 1.00, ClA_f: 0.60, ClA_r: 0.90,
+  eps_M: 1.0, Fz_min: 200.0, g: 9.81
+};
+
+/* ---------------- 轮胎（单轴刷子模型 + 摩擦圆） ---------------- */
+// 归一化力-滑移函数 Phi(u)：奇函数、C2 连续、在 |u|>=3 饱和到 ±1
+function phiUnit(u) {
+  const au = Math.abs(u);
+  if (au <= 3.0) {
+    const core = au - au * au / 3.0 + au * au * au / 27.0;
+    return u < 0 ? -core : core;
+  }
+  return u < 0 ? -1.0 : 1.0;
+}
+// dPhi/du
+function phiUnitD(u) {
+  const au = Math.abs(u);
+  return au <= 3.0 ? (1.0 - au / 3.0) * (1.0 - au / 3.0) : 0.0;
+}
+// 侧向力（正方向为车身 y 轴，即向左）
+function tireLateral(alpha, C, M) {
+  return -M * phiUnit(C * Math.tan(alpha) / M);
+}
+// 返回侧向力及对 alpha、M 的偏导，供解析雅可比使用
+function tireLateralParts(alpha, C, M) {
+  const s = Math.tan(alpha);
+  const u = C * s / M;
+  const Phi = phiUnit(u);
+  const dPhi = phiUnitD(u);
+  const ca = Math.cos(alpha);
+  const Fy = -M * Phi;
+  const dFy_da = -C * dPhi / Math.max(ca * ca, 1e-12);
+  const dFy_dM = -Phi + u * dPhi;
+  return { Fy, dFy_da, dFy_dM, Phi, u };
+}
+
+/* ---------------- 准静态垂向载荷（气动 + 纵向载荷转移） ---------------- */
+function vehicleLoads(V, ax) {
+  const q = 0.5 * P.rho * V * V;
+  const Fzf = P.m * P.g * P.b / P.L + q * P.ClA_f - P.m * ax * P.h / P.L;
+  const Fzr = P.m * P.g * P.a / P.L + q * P.ClA_r + P.m * ax * P.h / P.L;
+  return [Math.max(Fzf, P.Fz_min), Math.max(Fzr, P.Fz_min)];
+}
+
+/* ---------------- 平衡方程残差 e(z; V, delta) ∈ R³ ---------------- */
+function residual(z, V, delta) {
+  const beta = z[0], r = z[1], fx = z[2];
+  const vx = V * Math.cos(beta);
+  const vy = V * Math.sin(beta);
+  const ax = -r * vy;
+  const Ld = vehicleLoads(V, ax);
+  const Fzf = Ld[0], Fzr = Ld[1];
+  const Mf = P.mu_f * Fzf;
+  const Mr = Math.sqrt(Math.max(P.eps_M, (P.mu_r * Fzr) * (P.mu_r * Fzr) - fx * fx));
+  const af = Math.atan2(vy + P.a * r, vx) - delta;
+  const ar = Math.atan2(vy - P.b * r, vx);
+  const Fyf = tireLateral(af, P.Caf, Mf);
+  const Fyr = tireLateral(ar, P.Car, Mr);
+  const qd = 0.5 * P.rho * P.CdA;
+  const Fdx = -qd * V * vx;
+  const Fdy = -qd * V * vy;
+  const e1 = fx + Fdx - Fyf * Math.sin(delta) + P.m * r * vy;
+  const e2 = Fyf * Math.cos(delta) + Fyr + Fdy - P.m * r * vx;
+  const e3 = P.a * Fyf * Math.cos(delta) - P.b * Fyr;
+  return [e1, e2, e3];
+}
+
+/* ---------------- 解析雅可比 d e / d(beta, r, fx) ---------------- */
+function residualJacobian(z, V, delta) {
+  const beta = z[0], r = z[1], fx = z[2];
+  const cb = Math.cos(beta), sb = Math.sin(beta);
+  const vx = V * cb, vy = V * sb;
+  const ax = -r * vy;
+  const Ld = vehicleLoads(V, ax);
+  const Fzf = Ld[0], Fzr = Ld[1];
+  const Mf = P.mu_f * Fzf;
+  const Mr = Math.sqrt(Math.max(P.eps_M, (P.mu_r * Fzr) * (P.mu_r * Fzr) - fx * fx));
+  const af = Math.atan2(vy + P.a * r, vx) - delta;
+  const ar = Math.atan2(vy - P.b * r, vx);
+  const pf = tireLateralParts(af, P.Caf, Mf);
+  const pr = tireLateralParts(ar, P.Car, Mr);
+  const dFyf_da = pf.dFy_da, dFyf_dM = pf.dFy_dM;
+  const dFyr_da = pr.dFy_da, dFyr_dM = pr.dFy_dM;
+  const sd = Math.sin(delta), cd = Math.cos(delta);
+  const qd = 0.5 * P.rho * P.CdA;
+
+  // 滑移角对 (beta, r) 的偏导
+  const Df = (vy + P.a * r) * (vy + P.a * r) + vx * vx;
+  const Dr = (vy - P.b * r) * (vy - P.b * r) + vx * vx;
+  const daf_db = (vx * vx + vy * vy + P.a * r * vy) / Df;
+  const daf_dr = P.a * vx / Df;
+  const dar_db = (vx * vx + vy * vy - P.b * r * vy) / Dr;
+  const dar_dr = -P.b * vx / Dr;
+
+  // 载荷 / 摩擦圆半径对 (beta, r) 的偏导（ax = -r*vy）
+  const dax_db = -r * vx;
+  const dax_dr = -vy;
+  const mtl = P.m * P.h / P.L;
+  const dFzf_db = -mtl * dax_db;
+  const dFzf_dr = -mtl * dax_dr;
+  const dFzr_db = mtl * dax_db;
+  const dFzr_dr = mtl * dax_dr;
+  const dMf_db = P.mu_f * dFzf_db;
+  const dMf_dr = P.mu_f * dFzf_dr;
+  const disc = (P.mu_r * Fzr) * (P.mu_r * Fzr) - fx * fx;
+  const dMr_dFzr = disc > P.eps_M ? (P.mu_r * P.mu_r * Fzr) / Mr : 0.0;
+  const dMr_db = dMr_dFzr * dFzr_db;
+  const dMr_dr = dMr_dFzr * dFzr_dr;
+  const dMr_dfx = disc > P.eps_M ? -fx / Mr : 0.0;
+
+  const dFyf_db = dFyf_da * daf_db + dFyf_dM * dMf_db;
+  const dFyf_dr = dFyf_da * daf_dr + dFyf_dM * dMf_dr;
+  const dFyr_db = dFyr_da * dar_db + dFyr_dM * dMr_db;
+  const dFyr_dr = dFyr_da * dar_dr + dFyr_dM * dMr_dr;
+  const dFyr_dfx = dFyr_dM * dMr_dfx;
+
+  const dFdx_db = qd * V * vy;
+  const dFdy_db = -qd * V * vx;
+  const dvy_db = vx;
+  const dvx_db = -vy;
+
+  const J = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+  J[0][0] = dFdx_db - dFyf_db * sd + P.m * r * dvy_db;
+  J[0][1] = -dFyf_dr * sd + P.m * vy;
+  J[0][2] = 1.0;
+  J[1][0] = dFyf_db * cd + dFyr_db + dFdy_db - P.m * r * dvx_db;
+  J[1][1] = dFyf_dr * cd + dFyr_dr - P.m * vx;
+  J[1][2] = dFyr_dfx;
+  J[2][0] = P.a * dFyf_db * cd - P.b * dFyr_db;
+  J[2][1] = P.a * dFyf_dr * cd - P.b * dFyr_dr;
+  J[2][2] = -P.b * dFyr_dfx;
+  return J;
+}
+
+/* ---------------- 三自由度动力学 x = (vx, vy, r) ---------------- */
+// 载荷用三步准静态迭代（与 Python 的 3 次迭代一致），输入 (delta, fx)
+function dynamics(x, delta, fx) {
+  const vx = x[0], vy = x[1], r = x[2];
+  const V = Math.hypot(vx, vy);
+  const qd = 0.5 * P.rho * P.CdA;
+  const q = 0.5 * P.rho * V * V;
+  let Fzf = P.m * P.g * P.b / P.L + q * P.ClA_f;
+  let Fzr = P.m * P.g * P.a / P.L + q * P.ClA_r;
+  let af = 0, ar = 0, Fyf = 0, Fyr = 0, Fx_body = 0;
+  for (let it = 0; it < 3; it++) {
+    af = Math.atan2(vy + P.a * r, vx) - delta;
+    ar = Math.atan2(vy - P.b * r, vx);
+    Fyf = tireLateral(af, P.Caf, P.mu_f * Math.max(Fzf, P.Fz_min));
+    const Mr = Math.sqrt(Math.max(P.eps_M,
+      (P.mu_r * Math.max(Fzr, P.Fz_min)) * (P.mu_r * Math.max(Fzr, P.Fz_min)) - fx * fx));
+    Fyr = tireLateral(ar, P.Car, Mr);
+    Fx_body = fx - qd * V * vx - Fyf * Math.sin(delta);
+    const ax_body = Fx_body / P.m;
+    Fzf = P.m * P.g * P.b / P.L + q * P.ClA_f - P.m * ax_body * P.h / P.L;
+    Fzr = P.m * P.g * P.a / P.L + q * P.ClA_r + P.m * ax_body * P.h / P.L;
+  }
+  const Fdy = -qd * V * vy;
+  const Fy = Fyf * Math.cos(delta) + Fyr + Fdy;
+  const Mz = P.a * Fyf * Math.cos(delta) - P.b * Fyr;
+  return [Fx_body / P.m + r * vy, Fy / P.m - r * vx, Mz / P.Iz];
+}
+
+// 中心差分雅可比 A = df/dx（与 Python 一致，h = 1e-6）
+function dynamicsJacobian(x, delta, fx, h) {
+  h = h || 1e-6;
+  const A = [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+  for (let j = 0; j < 3; j++) {
+    const xp = x.slice(), xm = x.slice();
+    xp[j] += h; xm[j] -= h;
+    const fp = dynamics(xp, delta, fx);
+    const fm = dynamics(xm, delta, fx);
+    for (let i = 0; i < 3; i++) A[i][j] = (fp[i] - fm[i]) / (2 * h);
+  }
+  return A;
+}
+/* ---------------- 3x3 实矩阵特征值（特征多项式 + Cardano 公式） ---------------- */
+// 返回 [[re, im], ...]，按实部降序排列
+function eig3(A) {
+  const a11 = A[0][0], a12 = A[0][1], a13 = A[0][2];
+  const a21 = A[1][0], a22 = A[1][1], a23 = A[1][2];
+  const a31 = A[2][0], a32 = A[2][1], a33 = A[2][2];
+  const tr = a11 + a22 + a33;
+  const m2 = (a11 * a22 - a12 * a21) + (a11 * a33 - a13 * a31) + (a22 * a33 - a23 * a32);
+  const det = a11 * (a22 * a33 - a23 * a32) - a12 * (a21 * a33 - a23 * a31)
+    + a13 * (a21 * a32 - a22 * a31);
+  // λ³ + c2 λ² + c1 λ + c0 = 0
+  const c2 = -tr, c1 = m2, c0 = -det;
+  const p = c1 - c2 * c2 / 3.0;
+  const q = 2 * c2 * c2 * c2 / 27.0 - c2 * c1 / 3.0 + c0;
+  const D = q * q / 4.0 + p * p * p / 27.0;
+  const shift = -c2 / 3.0;
+  const tol = 1e-12 * Math.max(1.0, Math.abs(q * q / 4.0), Math.abs(p * p * p / 27.0));
+  const roots = [];
+  if (D > tol) {
+    const sq = Math.sqrt(D);
+    const A1 = Math.cbrt(-q / 2.0 + sq);
+    const B1 = Math.cbrt(-q / 2.0 - sq);
+    const t1 = A1 + B1;
+    const re = -t1 / 2.0 + shift;
+    const im = Math.abs(Math.sqrt(3.0) / 2.0 * (A1 - B1));
+    roots.push([t1 + shift, 0], [re, im], [re, -im]);
+  } else if (D < -tol) {
+    // 三个实根（三角解法）
+    const rr = 2.0 * Math.sqrt(-p / 3.0);
+    let arg = (3.0 * q / (2.0 * p)) * Math.sqrt(-3.0 / p);
+    arg = Math.max(-1.0, Math.min(1.0, arg));
+    const th = Math.acos(arg) / 3.0;
+    for (let k = 0; k < 3; k++) {
+      roots.push([rr * Math.cos(th - 2.0 * Math.PI * k / 3.0) + shift, 0]);
+    }
+  } else {
+    const u = Math.cbrt(-q / 2.0);
+    roots.push([2 * u + shift, 0], [-u + shift, 0], [-u + shift, 0]);
+  }
+  roots.sort((u, v) => v[0] - u[0] || v[1] - u[1]);
+  return roots;
+}
+
+/* ---------------- 线性方程组（列主元高斯消元） ---------------- */
+function solve3(A, b) {
+  const M = [[A[0][0], A[0][1], A[0][2], b[0]],
+             [A[1][0], A[1][1], A[1][2], b[1]],
+             [A[2][0], A[2][1], A[2][2], b[2]]];
+  for (let col = 0; col < 3; col++) {
+    let piv = col;
+    for (let row = col + 1; row < 3; row++) {
+      if (Math.abs(M[row][col]) > Math.abs(M[piv][col])) piv = row;
+    }
+    if (!(Math.abs(M[piv][col]) > 1e-14)) return null;
+    if (piv !== col) { const tmp = M[piv]; M[piv] = M[col]; M[col] = tmp; }
+    for (let row = col + 1; row < 3; row++) {
+      const f = M[row][col] / M[col][col];
+      for (let k = col; k < 4; k++) M[row][k] -= f * M[col][k];
+    }
+  }
+  const x = [0, 0, 0];
+  for (let row = 2; row >= 0; row--) {
+    let s = M[row][3];
+    for (let k = row + 1; k < 3; k++) s -= M[row][k] * x[k];
+    if (!(Math.abs(M[row][row]) > 1e-14)) return null;
+    x[row] = s / M[row][row];
+  }
+  return x.every(Number.isFinite) ? x : null;
+}
+
+/* ---------------- 诊断（力、滑移角、特征值、稳定性） ---------------- */
+function diagnose(z, V, delta) {
+  const beta = z[0], r = z[1], fx = z[2];
+  const vx = V * Math.cos(beta), vy = V * Math.sin(beta);
+  const ax = -r * vy;
+  const Ld = vehicleLoads(V, ax);
+  const Fzf = Ld[0], Fzr = Ld[1];
+  const Mf = P.mu_f * Fzf;
+  const Mr = Math.sqrt(Math.max(P.eps_M, (P.mu_r * Fzr) * (P.mu_r * Fzr) - fx * fx));
+  const af = Math.atan2(vy + P.a * r, vx) - delta;
+  const ar = Math.atan2(vy - P.b * r, vx);
+  const Fyf = tireLateral(af, P.Caf, Mf);
+  const Fyr = tireLateral(ar, P.Car, Mr);
+  const qd = 0.5 * P.rho * P.CdA;
+  const Fdx = -qd * V * vx;
+  const Fdy = -qd * V * vy;
+  const eig = eig3(dynamicsJacobian([vx, vy, r], delta, fx));
+  const maxRe = Math.max(eig[0][0], eig[1][0], eig[2][0]);
+  const kappa = fx / (P.mu_r * Fzr);
+  return {
+    beta, betaDeg: beta * 180 / Math.PI, r, fx, V, delta, vx, vy,
+    Fzf, Fzr, Mf, Mr, af, afDeg: af * 180 / Math.PI, ar, arDeg: ar * 180 / Math.PI,
+    Fyf, Fyr, Fdx, Fdy,
+    sx_f: Fyf / Mf, sx_r: Fyr / Mr,
+    kappa, fx_frac: kappa,
+    revolve_f: Math.hypot(0, Fyf) / Mf,                 // 前轴摩擦圆利用率（无纵向）
+    revolve_r: Math.hypot(fx, Fyr) / (P.mu_r * Fzr),    // 后轴摩擦圆利用率（纵+侧）
+    ax, ay: r * vx,
+    eig, maxRe, is_stable: maxRe < -1e-9,
+    detJ: det3(residualJacobian(z, V, delta))
+  };
+}
+function det3(A) {
+  return A[0][0] * (A[1][1] * A[2][2] - A[1][2] * A[2][1])
+    - A[0][1] * (A[1][0] * A[2][2] - A[1][2] * A[2][0])
+    + A[0][2] * (A[1][0] * A[2][1] - A[1][1] * A[2][0]);
+}
+
+/* ---------------- 平衡点分类 ---------------- */
+function classify(z, d, V) {
+  if (!d) return { kind: 'fail', label: '未收敛', reason: '迭代未收敛' };
+  if (!(V * Math.cos(d.beta) > 0.5)) {
+    return { kind: 'nonphysical', label: '非物理（前向速度不足）', reason: '前向速度不足' };
+  }
+  if (d.r <= 1e-3) {
+    return { kind: 'nonphysical', label: '非物理（r≤0，右转/静止）', reason: '本页按左转 r>0 约定' };
+  }
+  if (Math.abs(d.beta) > 1.2) {
+    return { kind: 'nonphysical', label: '非物理（侧偏角越界）', reason: '侧偏角越界' };
+  }
+  if (Math.abs(d.kappa) >= 1.0) {
+    return { kind: 'nonphysical', label: '非物理（超出后轴摩擦圆）', reason: '后轴需求超过摩擦圆' };
+  }
+  const drift = Math.abs(d.betaDeg) > 8.0 || Math.abs(d.kappa) > 0.30;
+  return drift
+    ? { kind: 'drift', label: '漂移平衡点' }
+    : { kind: 'grip', label: '抓地平衡点' };
+}
+
+/* ---------------- 阻尼牛顿法 + Armijo 回溯 ---------------- */
+function norm3(e) { return Math.hypot(e[0], e[1], e[2]); }
+
+// opt: {maxIter, tol, hist}
+function newton(z0, V, delta, opt) {
+  opt = opt || {};
+  const maxIter = opt.maxIter || 60;
+  const tol = opt.tol || 1e-9;
+  const hist = opt.hist !== false;
+  let z = [z0[0], z0[1], z0[2]];
+  let e = residual(z, V, delta);
+  let nrm = norm3(e);
+  const traj = [{ z: z.slice(), nrm: nrm }];
+  let converged = nrm < tol, iters = 0, wzFailed = false;
+  while (!converged && iters < maxIter) {
+    const J = residualJacobian(z, V, delta);
+    const dz = solve3(J, [-e[0], -e[1], -e[2]]);
+    if (!dz) { wzFailed = true; break; }
+    let t = 1.0, accepted = false, zn = z, en = e, nn = nrm;
+    for (let bt = 0; bt < 32; bt++) {
+      zn = [z[0] + t * dz[0], z[1] + t * dz[1], z[2] + t * dz[2]];
+      if (zn.every(Number.isFinite)) {
+        en = residual(zn, V, delta);
+        nn = norm3(en);
+        if (nn <= (1.0 - 1e-4 * t) * nrm || nn < tol) { accepted = true; break; }
+      }
+      t *= 0.5;
+    }
+    if (!accepted) { wzFailed = true; break; }
+    const stepNorm = Math.abs(t) * Math.hypot(dz[0], dz[1], dz[2]);
+    z = zn; e = en; nrm = nn; iters++;
+    if (hist) traj.push({ z: z.slice(), nrm: nrm });
+    converged = nrm < tol;
+    if (converged) break;
+    if (stepNorm < 1e-15 && nrm > tol) break;
+  }
+  return { z, traj, converged, iters, nrm, failed: wzFailed };
+}
+
+/* ---------------- 平衡点支路延拓（逐点牛顿 + 跳支检测） ---------------- */
+// 从 seedDelta 处的 seedZ 出发，沿 deltaList 向左右两个方向逐点求解
+// opt: {maxIter, tol, maxStepBeta(rad), maxStepR}
+function continuation(V, deltaList, seedDelta, seedZ, opt) {
+  opt = opt || {};
+  const maxIter = opt.maxIter || 40;
+  const tol = opt.tol || 1e-9;
+  const maxStepBeta = opt.maxStepBeta || 0.22;
+  const maxStepR = opt.maxStepR || 0.8;
+  let i0 = 0, best = Infinity;
+  for (let i = 0; i < deltaList.length; i++) {
+    const dd = Math.abs(deltaList[i] - seedDelta);
+    if (dd < best) { best = dd; i0 = i; }
+  }
+  const seed = newton(seedZ, V, deltaList[i0], { maxIter: 80, tol: tol, hist: false });
+  if (!seed.converged) return { points: [], seedOk: false, seedZ: seed.z };
+  const points = [];
+  const accept = (z, delta, prev) => {
+    if (!z.every(Number.isFinite)) return false;
+    if (Math.abs(z[0] - prev[0]) > maxStepBeta) return false;
+    if (Math.abs(z[1] - prev[1]) > maxStepR) return false;
+    if (Math.abs(z[2] - prev[2]) > 6000.0) return false;
+    const d = diagnose(z, V, delta);
+    if (!(V * Math.cos(d.beta) > 0.5)) return false;
+    if (d.r <= 0.002 || Math.abs(d.beta) > 1.2) return false;
+    if (Math.abs(d.kappa) >= 1.05) return false;
+    points.push({
+      delta: delta, z: z.slice(), beta: z[0], betaDeg: d.betaDeg, r: z[1], fx: z[2],
+      kappa: d.kappa, stable: d.is_stable, eig: d.eig
+    });
+    return true;
+  };
+  if (!accept(seed.z, deltaList[i0], seed.z)) return { points: [], seedOk: false, seedZ: seed.z };
+  // 向右延拓
+  let z = seed.z.slice();
+  for (let i = i0 + 1; i < deltaList.length; i++) {
+    const s = newton(z, V, deltaList[i], { maxIter: maxIter, tol: tol, hist: false });
+    if (!s.converged || !accept(s.z, deltaList[i], z)) break;
+    z = s.z;
+  }
+  // 向左延拓
+  z = seed.z.slice();
+  for (let i = i0 - 1; i >= 0; i--) {
+    const s = newton(z, V, deltaList[i], { maxIter: maxIter, tol: tol, hist: false });
+    if (!s.converged || !accept(s.z, deltaList[i], z)) break;
+    z = s.z;
+  }
+  points.sort((p, q) => p.delta - q.delta);
+  return { points, seedOk: true, seedZ: seed.z };
+}
+
+/* ---------------- 初值种子（多起点） ---------------- */
+const GRIP_SEEDS = [
+  [0.0, 0.4, 0.0], [0.0, 0.6, 800.0], [0.02, 0.8, 1500.0],
+  [0.0, 0.3, 400.0], [-0.02, 1.0, 2500.0], [0.04, 1.2, 4000.0],
+  [0.0, 1.6, 6000.0], [0.03, 0.2, 1000.0]
+];
+const DRIFT_SEEDS = [
+  [-0.42, 1.2, 7000.0], [-0.35, 0.9, 5000.0], [-0.50, 1.6, 8500.0],
+  [-0.30, 1.2, 6500.0], [-0.60, 1.0, 6000.0], [-0.25, 0.8, 4000.0],
+  [-0.45, 2.0, 9000.0], [-0.28, 1.5, 8000.0], [-0.70, 1.3, 5000.0],
+  [-0.40, 0.7, 3500.0]
+];
+
+// 在给定 (V, delta) 上寻找某类平衡点（多起点）
+function findEquilibrium(V, delta, kind) {
+  const seeds = kind === 'drift' ? DRIFT_SEEDS : GRIP_SEEDS;
+  let best = null;
+  for (const s of seeds) {
+    const sol = newton(s, V, delta, { maxIter: 80, tol: 1e-9, hist: false });
+    if (!sol.converged) continue;
+    const d = diagnose(sol.z, V, delta);
+    const cl = classify(sol.z, d, V);
+    if (cl.kind === 'nonphysical' || cl.kind === 'fail') continue;
+    if (kind === 'drift' && cl.kind !== 'drift') continue;
+    if (kind === 'grip' && cl.kind !== 'grip') continue;
+    const score = Math.abs(sol.nrm) + Math.abs(d.kappa);
+    if (!best || score < best.score) best = { z: sol.z, diag: d, kind: cl.kind, score };
+  }
+  return best;
+}
+
+/* ---------------- 参考真值（仅用于自检） ---------------- */
+const REF_CASES = [
+  {
+    name: 'V=8, δ=0.10 漂移', V: 8.0, delta: 0.10, guess: [-0.4216, 1.20, 7000.0],
+    ref: { betaDeg: -24.159036, r: 1.462424, fx: 7816.4409, kappa: 0.739621,
+      eig: [[-0.01841, 1.45709], [-0.01841, -1.45709], [0.01909, 0.0]] }
+  },
+  {
+    name: 'V=15, δ=0.10 抓地', V: 15.0, delta: 0.10, guess: [0.0, 0.50, 700.0],
+    ref: { betaDeg: 0.128503, r: 0.501572, fx: 704.428, kappa: null,
+      eig: [[-0.10989, 0.0], [-7.46269, 3.6642], [-7.46269, -3.6642]] }
+  },
+  {
+    name: 'V=15, δ=0.10 漂移', V: 15.0, delta: 0.10, guess: [-0.4216, 1.20, 7400.0],
+    ref: { betaDeg: -23.947526, r: 0.787591, fx: 7924.2553, kappa: null,
+      eig: [[-0.07688, 0.79428], [-0.07688, -0.79428], [0.1206, 0.0]] }
+  },
+  {
+    name: 'V=22, δ=0.10 抓地', V: 22.0, delta: 0.10, guess: [-0.05, 0.50, 2030.0],
+    ref: { betaDeg: -2.878578, r: 0.521577, fx: 2031.1755, kappa: null,
+      eig: [[0.0, 0.0], [0.0, 0.0], [0.0, 0.0]] }
+  }
+];
+
+// 自检：求解 4 个参考点并比较。
+// 平衡点量用归一化误差 |Δ|/(1+|ref|)（要求 < 1e-6）；
+// 参考特征值只给了 5 位小数，故单独用绝对误差（要求 < 1e-4）。
+function runSelfCheck() {
+  const rows = [];
+  let eqErr = 0, eigAbsErr = 0;
+  const eigMatch = (eig, ref) => {
+    const used = [false, false, false];
+    let worst = 0;
+    for (const rf of ref) {
+      let bi = -1, bd = Infinity;
+      for (let i = 0; i < eig.length; i++) {
+        if (used[i]) continue;
+        const dd = Math.abs(eig[i][0] - rf[0]) + Math.abs(eig[i][1] - rf[1]);
+        if (dd < bd) { bd = dd; bi = i; }
+      }
+      used[bi] = true;
+      worst = Math.max(worst, Math.abs(eig[bi][0] - rf[0]), Math.abs(eig[bi][1] - rf[1]));
+    }
+    return worst;
+  };
+  for (const c of REF_CASES) {
+    const sol = newton(c.guess, c.V, c.delta, { maxIter: 100, tol: 1e-10, hist: false });
+    const d = diagnose(sol.z, c.V, c.delta);
+    const row = { name: c.name, ok: sol.converged, converged: sol.converged, err: {}, abs: {} };
+    const cmp = (key, val, ref) => {
+      if (ref === null || ref === undefined) return;
+      const e = Math.abs(val - ref) / (1 + Math.abs(ref));
+      row.err[key] = e; row.abs[key] = Math.abs(val - ref);
+      eqErr = Math.max(eqErr, e);
+    };
+    cmp('betaDeg', d.betaDeg, c.ref.betaDeg);
+    cmp('r', d.r, c.ref.r);
+    cmp('fx', d.fx, c.ref.fx);
+    if (c.ref.kappa !== null) cmp('kappa', d.kappa, c.ref.kappa);
+    if (!(c.ref.eig[0][0] === 0 && c.ref.eig[1][0] === 0 && c.ref.eig[2][0] === 0)) {
+      const ee = eigMatch(d.eig, c.ref.eig);
+      row.err.eig = ee / (1 + Math.abs(ee)); row.abs.eig = ee;
+      eigAbsErr = Math.max(eigAbsErr, ee);
+    }
+    row.z = sol.z;
+    row.diag = { betaDeg: d.betaDeg, r: d.r, fx: d.fx, kappa: d.kappa, eig: d.eig, is_stable: d.is_stable };
+    rows.push(row);
+  }
+  return {
+    ok: eqErr < 1e-6 && eigAbsErr < 1e-4,
+    maxErr: eqErr, eqErr: eqErr, eigAbsErr: eigAbsErr, rows
+  };
+}
+
+/* ---------------- 平衡点支路（抓地 / 漂移） ---------------- */
+// 生成 delta 等距网格（含端点，step 建议 0.005）
+function buildDeltaGrid(dMin, dMax, step) {
+  const n = Math.round((dMax - dMin) / step);
+  const arr = [];
+  for (let i = 0; i <= n; i++) arr.push(+(dMin + i * step).toFixed(9));
+  return arr;
+}
+
+// 固定 V，对左右两个分支做逐点延拓，返回 {deltaList, grip:[pt], drift:[pt], seeds}
+function computeBranches(V, deltaList) {
+  const dl = deltaList || buildDeltaGrid(-0.20, 0.30, 0.005);
+  const seedDelta = 0.10;
+  const grip0 = findEquilibrium(V, seedDelta, 'grip');
+  const drift0 = findEquilibrium(V, seedDelta, 'drift');
+  const grip = grip0 ? continuation(V, dl, seedDelta, grip0.z, {}) : { points: [], seedOk: false };
+  const drift = drift0 ? continuation(V, dl, seedDelta, drift0.z, {}) : { points: [], seedOk: false };
+  return { deltaList: dl, grip: grip.points, drift: drift.points, gripSeed: grip0, driftSeed: drift0 };
+}
+
+// 在给定 (V, delta) 上按类别求平衡点；不存在时返回 null
+function equilibriumAt(V, delta, kind) {
+  return findEquilibrium(V, delta, kind);
+}
+
+/* ---------------- 相平面：冻结车速截面场 + 三维 RK4 轨迹 ---------------- */
+// 在 (beta, r) 平面上的投影场：用当前位置的车速构造 x=(V cosβ, V sinβ, r)
+function phaseVectorField(V, delta, fx, beta, r) {
+  const vx = V * Math.cos(beta), vy = V * Math.sin(beta);
+  const dx = dynamics([vx, vy, r], delta, fx);
+  const den = Math.max(vx * vx + vy * vy, 1e-9);
+  return [(vx * dx[1] - vy * dx[0]) / den, dx[2]];
+}
+
+// 真实三自由度动力学 RK4 积分，返回 (beta, r) 平面投影轨迹
+function integratePhase(x0, delta, fx, T, dt, lim) {
+  lim = lim || { beta: 1.45, rMin: -0.2, rMax: 8.0, vxMin: 0.3 };
+  const f = (x) => dynamics(x, delta, fx);
+  const out = [];
+  let x = [x0[0], x0[1], x0[2]], t = 0;
+  const push = () => { out.push([Math.atan2(x[1], x[0]), x[2]]); };
+  push();
+  while (t < T && out.length < 2500) {
+    const k1 = f(x);
+    const x2 = [x[0] + 0.5 * dt * k1[0], x[1] + 0.5 * dt * k1[1], x[2] + 0.5 * dt * k1[2]];
+    const k2 = f(x2);
+    const x3 = [x[0] + 0.5 * dt * k2[0], x[1] + 0.5 * dt * k2[1], x[2] + 0.5 * dt * k2[2]];
+    const k3 = f(x3);
+    const x4 = [x[0] + dt * k3[0], x[1] + dt * k3[1], x[2] + dt * k3[2]];
+    const k4 = f(x4);
+    const xn = [
+      x[0] + dt / 6 * (k1[0] + 2 * k2[0] + 2 * k3[0] + k4[0]),
+      x[1] + dt / 6 * (k1[1] + 2 * k2[1] + 2 * k3[1] + k4[1]),
+      x[2] + dt / 6 * (k1[2] + 2 * k2[2] + 2 * k3[2] + k4[2])
+    ];
+    if (!xn.every(Number.isFinite)) break;
+    x = xn; t += dt;
+    if (x[0] < lim.vxMin) break;
+    const beta = Math.atan2(x[1], x[0]);
+    if (Math.abs(beta) > lim.beta || x[2] < lim.rMin || x[2] > lim.rMax) { push(); break; }
+    push();
+  }
+  return out;
+}
+
+/* ---------------- node 静态自检导出（浏览器中 module 未定义，自动跳过） ---------------- */
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    P, phiUnit, phiUnitD, tireLateral, tireLateralParts, vehicleLoads, residual,
+    residualJacobian, dynamics, dynamicsJacobian, eig3, solve3, diagnose, classify,
+    newton, continuation, findEquilibrium, runSelfCheck, REF_CASES, phaseVectorField,
+    integratePhase, GRIP_SEEDS, DRIFT_SEEDS, buildDeltaGrid, computeBranches, equilibriumAt
+  };
+}
+/* =====================================================================
+ * 二、界面层：画布工具 / 状态 / 平衡点跟踪 / 各面板绘制 / 交互
+ * ===================================================================== */
+const COL = {
+  bg: '#0a1018', grid: '#15222f', axis: '#2c4055', text: '#cfe0ee', dim: '#7e93aa',
+  cyan: '#38bdf8', green: '#3ddc84', orange: '#ffa94d', red: '#ff5d6c',
+  purple: '#c084fc', yellow: '#fbbf24', pink: '#f472b6'
+};
+const FONT = '"Microsoft YaHei","Segoe UI",sans-serif';
+const DEG = 180 / Math.PI;
+const $ = (id) => document.getElementById(id);
+
+const UI = {
+  V: 8.0, delta: 0.10,
+  cur: null, note: '',
+  branchV: null, branches: null,
+  anim: { res: null, shown: 0, timer: null, running: false },
+  phase: null, phaseTimer: null,
+  chk: null
+};
+
+/* ---------- 画布：devicePixelRatio 适配 ---------- */
+function frame(cv) {
+  const rect = cv.getBoundingClientRect();
+  const dpr = Math.min(2, window.devicePixelRatio || 1);
+  const w = Math.max(240, Math.round(rect.width));
+  const h = Math.max(170, Math.round(rect.height));
+  const W = Math.round(w * dpr), H = Math.round(h * dpr);
+  if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  const ctx = cv.getContext('2d');
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  ctx.clearRect(0, 0, w, h);
+  return { ctx, w, h };
+}
+
+/* ---------- 坐标轴 / 网格 ---------- */
+function niceTicks(a, b, n) {
+  const span = b - a;
+  if (!(span > 0)) return [a];
+  const raw = span / Math.max(2, n);
+  const mag = Math.pow(10, Math.floor(Math.log(raw) / Math.LN10));
+  const norm = raw / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+  const out = [];
+  for (let v = Math.ceil(a / step - 1e-9) * step; v <= b + 1e-9; v += step) out.push(+v.toFixed(10));
+  return out;
+}
+
+// b={x,y,w,h} 像素框；xr/yr 数据范围；xt/yt 刻度；返回像素映射
+function drawBox(ctx, b, xr, yr, xt, yt, xfmt, yfmt, xlab, ylab) {
+  const X = (v) => b.x + (v - xr[0]) / (xr[1] - xr[0]) * b.w;
+  const Y = (v) => b.y + b.h - (v - yr[0]) / (yr[1] - yr[0]) * b.h;
+  ctx.save();
+  ctx.fillStyle = COL.bg;
+  ctx.fillRect(b.x, b.y, b.w, b.h);
+  ctx.strokeStyle = COL.grid;
+  ctx.lineWidth = 1;
+  for (const xv of xt) {
+    const x = Math.round(X(xv)) + 0.5;
+    ctx.beginPath(); ctx.moveTo(x, b.y); ctx.lineTo(x, b.y + b.h); ctx.stroke();
+  }
+  for (const yv of yt) {
+    const y = Math.round(Y(yv)) + 0.5;
+    ctx.beginPath(); ctx.moveTo(b.x, y); ctx.lineTo(b.x + b.w, y); ctx.stroke();
+  }
+  ctx.strokeStyle = COL.axis;
+  ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+  ctx.fillStyle = COL.dim;
+  ctx.font = '10.5px ' + FONT;
+  ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+  for (const xv of xt) ctx.fillText(xfmt(xv), X(xv), b.y + b.h + 5);
+  ctx.textAlign = 'right'; ctx.textBaseline = 'middle';
+  for (const yv of yt) ctx.fillText(yfmt(yv), b.x - 5, Y(yv));
+  ctx.fillStyle = COL.dim;
+  ctx.font = '11px ' + FONT;
+  if (xlab) { ctx.textAlign = 'center'; ctx.textBaseline = 'bottom'; ctx.fillText(xlab, b.x + b.w / 2, b.y + b.h + 21); }
+  if (ylab) {
+    ctx.save();
+    ctx.translate(b.x - 40, b.y + b.h / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    ctx.fillText(ylab, 0, 0);
+    ctx.restore();
+  }
+  ctx.restore();
+  return { X, Y };
+}
+
+/* ---------- 绘图小工具 ---------- */
+function text(ctx, s, x, y, color, align, baseline, font) {
+  ctx.fillStyle = color || COL.text;
+  ctx.font = (font || '12px') + ' ' + FONT;
+  ctx.textAlign = align || 'left';
+  ctx.textBaseline = baseline || 'middle';
+  ctx.fillText(s, x, y);
+}
+function arrow(ctx, x0, y0, x1, y1, color, lw) {
+  const dx = x1 - x0, dy = y1 - y0, len = Math.hypot(dx, dy);
+  if (len < 0.8) return;
+  const ux = dx / len, uy = dy / len;
+  const hd = Math.min(9, Math.max(4, len * 0.4));
+  ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = lw || 1.4;
+  ctx.beginPath(); ctx.moveTo(x0, y0); ctx.lineTo(x1 - ux * hd * 0.7, y1 - uy * hd * 0.7); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x1, y1);
+  ctx.lineTo(x1 - ux * hd - uy * hd * 0.42, y1 - uy * hd + ux * hd * 0.42);
+  ctx.lineTo(x1 - ux * hd + uy * hd * 0.42, y1 - uy * hd - ux * hd * 0.42);
+  ctx.closePath(); ctx.fill();
+}
+function roundRectPath(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+}
+function legend(ctx, x, y, items) {
+  ctx.font = '11px ' + FONT;
+  let cx = x;
+  for (const it of items) {
+    if (it.line) {
+      ctx.strokeStyle = it.color; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(cx, y); ctx.lineTo(cx + 16, y); ctx.stroke();
+    } else {
+      ctx.fillStyle = it.color;
+      ctx.beginPath(); ctx.arc(cx + 5, y, 4, 0, 7); ctx.fill();
+    }
+    text(ctx, it.label, cx + 22, y, COL.text, 'left', 'middle', '11px');
+    cx += 22 + ctx.measureText(it.label).width + 14;
+  }
+}
+function fmtNum(x, n) {
+  if (!isFinite(x)) return '—';
+  return (x < 0 ? '−' : '+') + Math.abs(x).toFixed(n === undefined ? 2 : n);
+}
+function fmtE(x) {
+  if (!isFinite(x)) return '—';
+  if (x === 0) return '0';
+  return x.toExponential(1);
+}
+function fmtEig(eig) {
+  const parts = [];
+  let i = 0;
+  while (i < eig.length) {
+    const re = eig[i][0], im = eig[i][1];
+    if (Math.abs(im) > 1e-6 && i + 1 < eig.length && Math.abs(eig[i + 1][0] - re) < 1e-9) {
+      parts.push(fmtNum(re, 4) + ' ± ' + Math.abs(im).toFixed(4) + 'j');
+      i += 2;
+    } else {
+      parts.push(fmtNum(re, 4));
+      i++;
+    }
+  }
+  return parts.join(' , ');
+}
+
+/* ---------- 读数 ---------- */
+function setV(id, txt, color) {
+  const el = $(id);
+  if (!el) return;
+  el.textContent = txt;
+  el.style.color = color || '';
+}
+function renderReadouts() {
+  $('vVal').textContent = UI.V.toFixed(1) + ' m/s';
+  const dd = UI.delta * DEG;
+  $('dVal').textContent = (dd >= 0 ? '+' : '') + dd.toFixed(2) + '° (' + UI.delta.toFixed(3) + ' rad)';
+  const cur = UI.cur;
+  if (!cur) {
+    setV('roKind', '—');
+    setV('roBeta', '—'); setV('roR', '—'); setV('roFx', '—'); setV('roK', '—');
+    setV('roStab', '—'); setV('roEig', '—');
+    setV('roNote', UI.note || '—', COL.orange);
+    return;
+  }
+  const d = cur.diag;
+  const isDrift = cur.kind === 'drift';
+  setV('roKind', cur.label, isDrift ? COL.orange : COL.green);
+  setV('roBeta', fmtNum(d.betaDeg, 2) + '°');
+  setV('roR', fmtNum(d.r, 4) + ' rad/s');
+  setV('roFx', fmtNum(d.fx, 1) + ' N');
+  setV('roK', fmtNum(d.kappa, 4));
+  setV('roStab', d.is_stable ? '稳定（max Re λ < 0）' : '不稳定（max Re λ = ' + fmtNum(d.maxRe, 4) + '）',
+    d.is_stable ? COL.green : COL.red);
+  setV('roEig', fmtEig(d.eig));
+  setV('roNote', UI.note || '提示：同一工况存在多个平衡点，初值不同会收敛到不同的解——对比面板 B 的抓地/漂移初值。',
+    UI.note ? COL.orange : COL.dim);
+}
+
+/* ---------- 平衡点求解与跟踪 ---------- */
+function currentFrom(z, V, delta) {
+  const d = diagnose(z, V, delta);
+  const cl = classify(z, d, V);
+  return { z: z.slice(), diag: d, kind: cl.kind, label: cl.label };
+}
+function trySolve(z, V, delta) {
+  const s = newton(z, V, delta, { maxIter: 70, tol: 1e-10, hist: false });
+  if (!s.converged) return null;
+  const c = currentFrom(s.z, V, delta);
+  return (c.kind === 'grip' || c.kind === 'drift') ? c : null;
+}
+// 用上一个状态作初值沿 (V, δ) 延拓；失败则从分支点回退
+function trackCurrent() {
+  const V = UI.V, delta = UI.delta;
+  const prev = UI.cur;
+  const nearSorted = (list) => list.slice().sort((a, b) => Math.abs(a.delta - delta) - Math.abs(b.delta - delta));
+  let res = null;
+  if (prev) res = trySolve(prev.z, V, delta);
+  // 热启动失败或跳到了另一条支路：优先从原支路的分支点重新求，保持抓地/漂移的连续性
+  if (UI.branches && prev && (!res || prev.kind !== res.kind)) {
+    const prefer = prev.kind === 'grip' ? UI.branches.grip : UI.branches.drift;
+    for (const p of nearSorted(prefer || []).slice(0, 6)) {
+      const r2 = trySolve(p.z, V, delta);
+      if (r2 && r2.kind === prev.kind) { res = r2; break; }
+    }
+  }
+  if (!res && UI.branches) {
+    const cands = nearSorted(UI.branches.grip.concat(UI.branches.drift));
+    for (let i = 0; i < Math.min(5, cands.length); i++) {
+      res = trySolve(cands[i].z, V, delta);
+      if (res) break;
+    }
+  }
+  if (!res) {
+    for (const kind of ['drift', 'grip']) {
+      const eq = equilibriumAt(V, delta, kind);
+      if (eq) { res = currentFrom(eq.z, V, delta); break; }
+    }
+  }
+  let note = '';
+  if (res) {
+    if (prev && prev.kind && prev.kind !== res.kind) {
+      note = prev.kind === 'grip'
+        ? '该 δ 处没有左转抓地支路（抓地左转需要 δ>0），已切换为漂移平衡点。'
+        : '已从分支点重新跟踪到新的平衡点。';
+    }
+    UI.cur = res;
+  } else {
+    note = '当前 (V, δ) 下没有找到左转（r>0）平衡点，各面板仍显示上一个状态。';
+  }
+  UI.note = note;
+}
+function ensureBranches() {
+  if (UI.branches && UI.branchV === UI.V) return;
+  UI.branches = computeBranches(UI.V, buildDeltaGrid(-0.20, 0.30, 0.005));
+  UI.branchV = UI.V;
+}
+// 载入指定类别平衡点（按钮）
+function loadKind(kind) {
+  const eq = equilibriumAt(UI.V, UI.delta, kind);
+  if (!eq) {
+    UI.note = kind === 'grip'
+      ? '当前 δ ≤ 0 不存在左转抓地平衡点：抓地左转需要 δ > 0，请把 δ 调到正值。'
+      : '当前工况沿漂移支路没有找到平衡点。';
+    renderReadouts();
+    return;
+  }
+  UI.cur = currentFrom(eq.z, UI.V, UI.delta);
+  UI.note = '';
+  $('inB0').value = (eq.z[0] * DEG).toFixed(2);
+  $('inR0').value = eq.z[1].toFixed(3);
+  $('inF0').value = eq.z[2].toFixed(0);
+  renderReadouts(); drawA(); drawC(); prepNewton(); schedulePhase();
+}
+// 统一刷新：V/δ 变化或载入新状态
+function refresh(reason) {
+  ensureBranches();
+  if (reason !== 'load') trackCurrent();
+  renderReadouts();
+  drawA();
+  drawC();
+  prepNewton();
+  schedulePhase();
+}
+/* =====================================================================
+ * 面板 A：车辆俯视图 + 轮胎力 + 前后轴摩擦圆
+ * ===================================================================== */
+function drawA() {
+  const { ctx, w, h } = frame($('cvA'));
+  const cur = UI.cur;
+  const d = cur ? cur.diag : null;
+
+  // 车辆区（左侧）：x 向前画成屏幕向上，y 向左画成屏幕向左
+  const carW = w * 0.58;
+  const s = Math.min((carW - 26) / 4.6, (h - 92) / 4.8);
+  const cx = carW * 0.52, cy = h * 0.53;
+  const S = (x, y) => [cx - y * s, cy - x * s];
+
+  function wheel(xw, yw, ang) {
+    const p = S(xw, yw);
+    ctx.save();
+    ctx.translate(p[0], p[1]);
+    ctx.rotate(-ang);
+    roundRectPath(ctx, -0.13 * s, -0.32 * s, 0.26 * s, 0.64 * s, 0.07 * s);
+    ctx.fillStyle = '#0b141c';
+    ctx.fill();
+    ctx.strokeStyle = '#8fa6bb';
+    ctx.lineWidth = 1.1;
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  // 车身
+  ctx.save();
+  const bx0 = cx - 0.90 * s, bx1 = cx + 0.90 * s;
+  const by0 = cy - 2.00 * s, by1 = cy + 1.85 * s;
+  roundRectPath(ctx, bx0, by0, bx1 - bx0, by1 - by0, 0.34 * s);
+  ctx.fillStyle = '#11202f';
+  ctx.fill();
+  ctx.strokeStyle = '#35607f';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // 前挡风 / 后窗
+  ctx.fillStyle = 'rgba(56,189,248,.13)';
+  roundRectPath(ctx, cx - 0.78 * s, cy - 1.28 * s, 1.56 * s, 0.95 * s, 0.16 * s);
+  ctx.fill();
+  roundRectPath(ctx, cx - 0.72 * s, cy + 0.42 * s, 1.44 * s, 0.72 * s, 0.14 * s);
+  ctx.fillStyle = 'rgba(56,189,248,.07)';
+  ctx.fill();
+  ctx.restore();
+
+  // 轴线 + 车轮
+  ctx.setLineDash([3, 4]);
+  ctx.strokeStyle = COL.dim;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(cx, cy - 2.35 * s); ctx.lineTo(cx, cy + 2.2 * s); ctx.stroke();
+  ctx.setLineDash([]);
+  wheel(P.a, 0.78, d ? UI.delta : 0);
+  wheel(P.a, -0.78, d ? UI.delta : 0);
+  wheel(-P.b, 0.78, 0);
+  wheel(-P.b, -0.78, 0);
+  // 轴位置标注
+  text(ctx, '前轴', cx + 0.98 * s, cy - P.a * s, COL.dim, 'left', 'middle', '10.5px');
+  text(ctx, '后轴', cx + 0.98 * s, cy + P.b * s, COL.dim, 'left', 'middle', '10.5px');
+
+  if (!d) {
+    text(ctx, '没有可用的平衡点', cx, h - 26, COL.orange, 'center', 'middle', '13px');
+    return;
+  }
+
+  // 速度矢量 + β 角
+  const velLen = 2.05 * s;
+  const [vx1, vy1] = [cx - Math.sin(d.beta) * velLen, cy - Math.cos(d.beta) * velLen];
+  arrow(ctx, cx, cy, vx1, vy1, COL.yellow, 2.4);
+  text(ctx, 'V = ' + UI.V.toFixed(1) + ' m/s', vx1 + 6, vy1 - 8, COL.yellow, 'left', 'middle', '11.5px');
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = COL.dim;
+  ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(cx, cy - 1.75 * s); ctx.stroke();
+  ctx.setLineDash([]);
+  const a0 = -Math.PI / 2, a1 = -Math.PI / 2 - d.beta;
+  ctx.strokeStyle = COL.yellow;
+  ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  ctx.arc(cx, cy, 1.15 * s, a0, a1, a1 < a0);
+  ctx.stroke();
+  const am = (a0 + a1) / 2;
+  text(ctx, 'β = ' + fmtNum(d.betaDeg, 1) + '°', cx + Math.cos(am) * 1.35 * s,
+    cy + Math.sin(am) * 1.35 * s, COL.yellow, 'center', 'middle', '11.5px');
+
+  // 前轮转角 δ
+  const fp = S(P.a, 0.78);
+  ctx.strokeStyle = COL.cyan;
+  ctx.lineWidth = 1.3;
+  ctx.beginPath();
+  ctx.arc(fp[0], fp[1], 0.55 * s, -Math.PI / 2, -Math.PI / 2 - UI.delta, UI.delta > 0 ? false : true);
+  ctx.stroke();
+  text(ctx, 'δ = ' + fmtNum(UI.delta * DEG, 1) + '°', fp[0] - 10, fp[1] - 0.72 * s, COL.cyan, 'right', 'middle', '11px');
+
+  // 轮胎侧向力（正 = 车身 y 正 = 屏幕左）
+  const fMax = Math.max(Math.abs(d.Fyf), Math.abs(d.Fyr), 2500);
+  const drawLat = (px, py, F, color, name) => {
+    const len = Math.max(14, 92 * Math.abs(F) / fMax);
+    const dir = F >= 0 ? -1 : 1;             // 屏幕 x 方向
+    arrow(ctx, px, py, px + dir * len, py, color, 2.2);
+    text(ctx, name + ' = ' + (F / 1000).toFixed(2) + ' kN',
+      px + dir * (len + 6), py - 9, color, dir < 0 ? 'right' : 'left', 'middle', '10.5px');
+  };
+  drawLat(cx, cy - P.a * s, d.Fyf, COL.cyan, 'Fyf');
+  drawLat(cx, cy + P.b * s, d.Fyr, COL.purple, 'Fyr');
+
+  // 后轴驱动力 fx（车身 x 正 = 屏幕向上）
+  const fxLen = Math.max(14, 92 * Math.abs(d.fx) / 9500);
+  arrow(ctx, cx + 0.02 * s, cy + P.b * s, cx + 0.02 * s, cy + P.b * s - fxLen, COL.orange, 2.2);
+  text(ctx, 'fx = ' + (d.fx / 1000).toFixed(2) + ' kN', cx + 8, cy + P.b * s - fxLen - 6,
+    COL.orange, 'left', 'middle', '10.5px');
+
+  // 图例
+  legend(ctx, 10, h - 16, [
+    { color: COL.yellow, line: true, label: '速度' },
+    { color: COL.cyan, line: true, label: '前轴侧向力' },
+    { color: COL.purple, line: true, label: '后轴侧向力' },
+    { color: COL.orange, line: true, label: '后轴驱动力' }
+  ]);
+
+  // ---------------- 右侧：前后轴摩擦圆 ----------------
+  const x0 = w * 0.60;
+  ctx.setLineDash([4, 5]);
+  ctx.strokeStyle = COL.grid;
+  ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(x0, 16); ctx.lineTo(x0, h - 16); ctx.stroke();
+  ctx.setLineDash([]);
+
+  const gAreaW = w - x0 - 22;
+  const R = Math.min(gAreaW * 0.40, (h - 132) / 4.3);
+  const gx = x0 + gAreaW / 2;
+  const cy1 = 46 + R;
+  const cy2 = cy1 + 2 * R + 74;
+
+  function gauge(gcx, gcy, title, lonFrac, latFrac, util, availText, extraText) {
+    // 圆底
+    ctx.beginPath(); ctx.arc(gcx, gcy, R, 0, 2 * Math.PI);
+    ctx.fillStyle = 'rgba(56,189,248,.035)'; ctx.fill();
+    ctx.strokeStyle = COL.axis; ctx.lineWidth = 1; ctx.stroke();
+    // 十字轴
+    ctx.setLineDash([3, 4]); ctx.strokeStyle = COL.grid; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(gcx - R, gcy); ctx.lineTo(gcx + R, gcy); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(gcx, gcy - R); ctx.lineTo(gcx, gcy + R); ctx.stroke();
+    ctx.setLineDash([]);
+    // 利用率圆环
+    const ringCol = util > 0.95 ? COL.red : util > 0.82 ? COL.orange : COL.green;
+    ctx.strokeStyle = ringCol; ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.arc(gcx, gcy, R + 7, -Math.PI / 2, -Math.PI / 2 + Math.min(1, util) * 2 * Math.PI);
+    ctx.stroke();
+    // 力矢量点 (纵向, 侧向)
+    const px = gcx + lonFrac * R, py = gcy - latFrac * R;
+    ctx.setLineDash([3, 3]);
+    ctx.strokeStyle = 'rgba(207,224,238,.28)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(gcx, py); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px, gcy); ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.strokeStyle = COL.text; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.moveTo(gcx, gcy); ctx.lineTo(px, py); ctx.stroke();
+    ctx.fillStyle = COL.text;
+    ctx.beginPath(); ctx.arc(px, py, 4, 0, 7); ctx.fill();
+    ctx.fillStyle = COL.bg;
+    ctx.beginPath(); ctx.arc(gcx, gcy, 2.4, 0, 7); ctx.fill();
+    // 标题与读数
+    text(ctx, title, gcx, gcy - R - 20, COL.text, 'center', 'middle', '12px');
+    text(ctx, availText, gcx, gcy + R + 20, COL.dim, 'center', 'middle', '10.5px');
+    text(ctx, extraText, gcx, gcy + R + 36, util > 0.82 ? COL.orange : COL.dim, 'center', 'middle', '10.5px');
+    text(ctx, '利用率 ' + (util * 100).toFixed(0) + '%', gcx, gcy, ringCol, 'center', 'middle', '10.5px');
+    text(ctx, '纵向 →', gcx + R * 0.62, gcy - 10, COL.dim, 'center', 'middle', '9.5px');
+    text(ctx, '侧向 ↑', gcx - R * 0.62, gcy - R * 0.72, COL.dim, 'center', 'middle', '9.5px');
+  }
+
+  gauge(gx, cy1, '前轴摩擦圆', 0, d.Fyf / d.Mf, d.Mf > 0 ? Math.abs(d.Fyf) / d.Mf : 0,
+    'μFz = ' + (d.Mf / 1000).toFixed(1) + ' kN', '仅有侧向力');
+  gauge(gx, cy2, '后轴摩擦圆', d.kappa, d.Fyr / (P.mu_r * d.Fzr), d.revolve_r,
+    'μFz = ' + (P.mu_r * d.Fzr / 1000).toFixed(1) + ' kN',
+    '纵向占比 ' + (100 * Math.abs(d.kappa)).toFixed(0) + '% · κ=' + d.kappa.toFixed(2));
+}
+/* =====================================================================
+ * 面板 B：牛顿迭代（(β,r) 路径 + 残差范数对数曲线 + 动画）
+ * ===================================================================== */
+// 读取初值输入框（beta 用度）
+function readInit() {
+  const fb = parseFloat($('inB0').value);
+  const fr = parseFloat($('inR0').value);
+  const ff = parseFloat($('inF0').value);
+  const b = isFinite(fb) ? Math.max(-60, Math.min(60, fb)) : -17.2;
+  const r = isFinite(fr) ? Math.max(0.01, Math.min(6.0, fr)) : 1.0;
+  const f = isFinite(ff) ? Math.max(-2000, Math.min(20000, ff)) : 5000;
+  return [b / DEG, r, f];
+}
+function stopAnim() {
+  if (UI.anim.timer) { clearInterval(UI.anim.timer); UI.anim.timer = null; }
+  UI.anim.running = false;
+}
+// 重新计算一次完整牛顿轨迹（只算一次，动画只是回放）
+function prepNewton() {
+  stopAnim();
+  const z0 = readInit();
+  const res = newton(z0, UI.V, UI.delta, { maxIter: 60, tol: 1e-10, hist: true });
+  UI.anim.res = res;
+  UI.anim.shown = 0;
+  drawB();
+  updateNB();
+}
+function stepNewton() {
+  const a = UI.anim;
+  if (!a.res) return;
+  if (a.shown < a.res.traj.length - 1) a.shown++;
+  drawB();
+  updateNB();
+}
+function runNewton() {
+  const a = UI.anim;
+  if (!a.res) return;
+  if (a.shown >= a.res.traj.length - 1) a.shown = 0;
+  stopAnim();
+  a.running = true;
+  stepNewton();
+  a.timer = setInterval(() => {
+    stepNewton();
+    if (a.shown >= a.res.traj.length - 1) stopAnim();
+  }, 320);
+}
+function resetNewton() {
+  stopAnim();
+  UI.anim.shown = 0;
+  drawB();
+  updateNB();
+}
+// 面板 B 状态行：迭代进度 / 收敛结论
+function updateNB() {
+  const el = $('nbStatus');
+  if (!el) return;
+  const a = UI.anim, res = a.res;
+  if (!res) { el.textContent = '—'; el.style.color = COL.dim; return; }
+  const n = res.traj.length - 1;
+  const k = Math.min(a.shown, n);
+  const p = res.traj[k];
+  if (k < n) {
+    el.textContent = '迭代 ' + k + ' / ' + n + '：‖e‖ = ' + fmtE(p.nrm) +
+      (res.traj[0].nrm > 0 ? '（初值 ‖e‖ = ' + fmtE(res.traj[0].nrm) + '）' : '');
+    el.style.color = COL.yellow;
+    return;
+  }
+  if (!res.converged) {
+    el.textContent = '未收敛：已达 ' + res.iters + ' 步仍满足不了 Armijo 条件，‖e‖ = ' + fmtE(res.nrm) +
+      '（减小初值或换一个初值试试）';
+    el.style.color = COL.red;
+    return;
+  }
+  const c = classify(res.z, diagnose(res.z, UI.V, UI.delta), UI.V);
+  const d = diagnose(res.z, UI.V, UI.delta);
+  if (c.kind === 'grip' || c.kind === 'drift') {
+    el.textContent = '收敛 → ' + c.label + '：β = ' + fmtNum(d.betaDeg, 2) + '°，r = ' + fmtNum(d.r, 4) +
+      ' rad/s，fx = ' + (d.fx / 1000).toFixed(2) + ' kN（‖e‖ = ' + fmtE(res.nrm) + '）';
+    el.style.color = c.kind === 'drift' ? COL.orange : COL.green;
+  } else {
+    el.textContent = '已收敛但' + c.label + '（' + c.reason + '）：β = ' + fmtNum(d.betaDeg, 2) + '°';
+    el.style.color = COL.red;
+  }
+}
+
+function drawB() {
+  const { ctx, w, h } = frame($('cvB'));
+  const a = UI.anim, res = a.res;
+  const b1 = { x: 60, y: 30, w: Math.max(150, w * 0.455), h: h - 88 };
+  const b2 = { x: b1.x + b1.w + 64, y: 30, w: Math.max(110, w - (b1.x + b1.w + 64) - 20), h: b1.h };
+
+  // 最近的分支平衡点（用于在路径平面标出两个目标解）
+  let gripP = null, driftP = null;
+  if (UI.branches) {
+    for (const p of UI.branches.grip) if (!gripP || Math.abs(p.delta - UI.delta) < Math.abs(gripP.delta - UI.delta)) gripP = p;
+    for (const p of UI.branches.drift) if (!driftP || Math.abs(p.delta - UI.delta) < Math.abs(driftP.delta - UI.delta)) driftP = p;
+  }
+
+  // ---- 左：路径范围（用全部轨迹点，动画期间坐标不跳动）----
+  let bmin = Infinity, bmax = -Infinity, rmin = Infinity, rmax = -Infinity;
+  const addPt = (bd, r) => {
+    if (!isFinite(bd) || !isFinite(r) || Math.abs(bd) > 75 || r < -2.5 || r > 6) return;
+    bmin = Math.min(bmin, bd); bmax = Math.max(bmax, bd);
+    rmin = Math.min(rmin, r); rmax = Math.max(rmax, r);
+  };
+  if (res) for (const p of res.traj) addPt(p.z[0] * DEG, p.z[1]);
+  if (gripP) addPt(gripP.betaDeg, gripP.r);
+  if (driftP) addPt(driftP.betaDeg, driftP.r);
+  if (!isFinite(bmin)) { bmin = -30; bmax = 4; rmin = 0.3; rmax = 1.8; }
+  let xr = [bmin - 3, bmax + 3], yr = [Math.max(0, rmin - 0.12), rmax + 0.12];
+  if (xr[1] - xr[0] < 22) { const m = (xr[0] + xr[1]) / 2; xr = [m - 11, m + 11]; }
+  if (yr[1] - yr[0] < 0.8) { const m = (yr[0] + yr[1]) / 2; yr = [Math.max(0, m - 0.4), Math.max(0.8, m + 0.4)]; }
+  const xt = niceTicks(xr[0], xr[1], 5), yt = niceTicks(yr[0], yr[1], 5);
+  const M = drawBox(ctx, b1, xr, yr, xt, yt, (v) => v.toFixed(0), (v) => v.toFixed(2), 'β [deg]', 'r [rad/s]');
+  text(ctx, '(β, r) 平面迭代路径', b1.x, 14, COL.text, 'left', 'middle', '12px');
+
+  // 目标平衡点
+  const mark = (p, color, lab) => {
+    if (!p) return;
+    const x = M.X(p.betaDeg), y = M.Y(p.r);
+    ctx.save();
+    ctx.strokeStyle = color; ctx.fillStyle = color; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(x, y, 6, 0, 7); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, 2.4, 0, 7); ctx.fill();
+    text(ctx, lab, x + 9, y - 9, color, 'left', 'middle', '10px');
+    ctx.restore();
+  };
+  mark(gripP, COL.green, '抓地平衡点');
+  mark(driftP, COL.orange, '漂移平衡点');
+
+  // 迭代路径
+  const n = res ? res.traj.length - 1 : 0;
+  const kk = res ? Math.min(a.shown, n) : 0;
+  const pts = res ? res.traj.slice(0, kk + 1) : [];
+  ctx.save();
+  ctx.beginPath(); ctx.rect(b1.x + 1, b1.y + 1, b1.w - 2, b1.h - 2); ctx.clip();
+  if (pts.length > 1) {
+    ctx.strokeStyle = 'rgba(56,189,248,.9)'; ctx.lineWidth = 1.6;
+    ctx.beginPath();
+    pts.forEach((p, i) => {
+      const x = M.X(p.z[0] * DEG), y = M.Y(p.z[1]);
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+  }
+  pts.forEach((p, i) => {
+    const x = M.X(p.z[0] * DEG), y = M.Y(p.z[1]);
+    if (i === pts.length - 1 && i > 0) return;
+    ctx.fillStyle = COL.cyan;
+    ctx.beginPath(); ctx.arc(x, y, 2.1, 0, 7); ctx.fill();
+  });
+  if (pts.length) {
+    const p0 = pts[0];
+    ctx.strokeStyle = COL.pink; ctx.lineWidth = 1.6;
+    ctx.beginPath(); ctx.arc(M.X(p0.z[0] * DEG), M.Y(p0.z[1]), 5, 0, 7); ctx.stroke();
+  }
+  {
+    const p = pts[pts.length - 1];
+    const x = M.X(p.z[0] * DEG), y = M.Y(p.z[1]);
+    ctx.fillStyle = COL.yellow; ctx.strokeStyle = COL.bg; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.arc(x, y, 4.6, 0, 7); ctx.fill(); ctx.stroke();
+    text(ctx, '‖e‖=' + fmtE(p.nrm), x + 8, y + 11, COL.yellow, 'left', 'middle', '10px');
+  }
+  ctx.restore();
+  if (kk === 0) {
+    text(ctx, '点「运行」播放迭代动画', b1.x + b1.w - 6, b1.y + b1.h - 8, COL.dim, 'right', 'bottom', '10px');
+  }
+  text(ctx, '初值 β0=' + fmtNum(readInit()[0] * DEG, 1) + '°, r0=' + readInit()[1].toFixed(2) +
+    ', fx0=' + (readInit()[2] / 1000).toFixed(1) + ' kN', b1.x, b1.y + b1.h + 40,
+    COL.dim, 'left', 'middle', '10.5px');
+
+  // ---- 右：残差范数（对数坐标）----
+  const lg = (v) => (v > 0 ? Math.log10(v) : -16);
+  const ys = res ? res.traj.map((p) => lg(p.nrm)) : [0];
+  let ymaxL = Math.max(1, Math.ceil(Math.max.apply(null, ys) + 0.5));
+  let yminL = Math.min(-11, Math.floor(Math.min.apply(null, ys) - 1));
+  const xr2 = [0, Math.max(1, n)];
+  const t1 = niceTicks(xr2[0], xr2[1], 4);
+  const t2 = [];
+  for (let v = yminL; v <= ymaxL; v++) t2.push(v);
+  const M2 = drawBox(ctx, b2, xr2, [yminL, ymaxL], t1, t2,
+    (v) => v.toFixed(0), (v) => '1e' + v, '迭代次数 k', 'log10 ‖e‖');
+  text(ctx, '残差范数（对数坐标）', b2.x, 14, COL.text, 'left', 'middle', '12px');
+  // 容差线
+  const ty = M2.Y(-9);
+  if (ty > b2.y && ty < b2.y + b2.h) {
+    ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(192,132,252,.65)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(b2.x, ty); ctx.lineTo(b2.x + b2.w, ty); ctx.stroke();
+    ctx.setLineDash([]);
+    text(ctx, 'tol=1e-9', b2.x + b2.w - 3, ty - 7, COL.purple, 'right', 'middle', '9.5px');
+  }
+  if (res) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(b2.x + 1, b2.y + 1, b2.w - 2, b2.h - 2); ctx.clip();
+    ctx.strokeStyle = COL.cyan; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    for (let i = 0; i <= kk; i++) {
+      const x = M2.X(i), y = M2.Y(lg(res.traj[i].nrm));
+      if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    for (let i = 0; i <= kk; i++) {
+      const x = M2.X(i), y = M2.Y(lg(res.traj[i].nrm));
+      ctx.fillStyle = i === kk ? COL.yellow : COL.cyan;
+      ctx.beginPath(); ctx.arc(x, y, i === kk ? 4 : 2.4, 0, 7); ctx.fill();
+    }
+    ctx.restore();
+    if (res.traj[0].nrm > 0) {
+      text(ctx, '初值残差 ' + fmtE(res.traj[0].nrm), b2.x + b2.w, b2.y + 10,
+        COL.dim, 'right', 'top', '10px');
+    }
+    // 收敛后标出精确残差
+    const last = res.traj[n];
+    text(ctx, '终点 ' + fmtE(last.nrm), b2.x + 3, b2.y + 10, COL.dim, 'left', 'top', '10px');
+  } else {
+    text(ctx, '计算中…', b2.x + b2.w / 2, b2.y + b2.h / 2, COL.dim, 'center', 'middle', '12px');
+  }
+  legend(ctx, b1.x, h - 16, [
+    { color: COL.pink, line: false, label: '初值' },
+    { color: COL.cyan, line: true, label: '迭代路径' },
+    { color: COL.yellow, line: false, label: '当前点' },
+    { color: COL.green, line: false, label: '抓地解' },
+    { color: COL.orange, line: false, label: '漂移解' }
+  ]);
+}
+/* =====================================================================
+ * 面板 C：平衡点支路（β、r、κ 随 δ 变化，按稳定性分色）
+ * ===================================================================== */
+function drawC() {
+  const { ctx, w, h } = frame($('cvC'));
+  const br = UI.branches;
+  const xr = [-12.5, 18.0];                 // δ 的角度范围
+  const L = 64, Rm = 18, T = 24, B = 36, gap = 24;
+  const ph = Math.max(70, (h - T - B - 2 * gap) / 3);
+  const bw = Math.max(120, w - L - Rm);
+  const subs = [0, 1, 2].map((i) => ({ b: { x: L, y: T + i * (ph + gap), w: bw, h: ph } }));
+
+  // 各子图数据范围
+  const ys = [[], [], []];
+  const collect = (list) => {
+    for (const p of list) {
+      ys[0].push(p.betaDeg); ys[1].push(p.r); ys[2].push(p.kappa);
+    }
+  };
+  if (br) { collect(br.grip); collect(br.drift); }
+  const mkRange = (arr, fallback, padFrac, minSpan) => {
+    if (!arr.length) return fallback;
+    let a = Math.min.apply(null, arr), b = Math.max.apply(null, arr);
+    let pad = (b - a) * padFrac;
+    if (b - a < minSpan) { const m = (a + b) / 2; a = m - minSpan / 2; b = m + minSpan / 2; pad = 0; }
+    return [a - pad, b + pad];
+  };
+  const yr = [
+    mkRange(ys[0], [-32, 6], 0.10, 8),
+    mkRange(ys[1], [0.2, 1.9], 0.12, 0.4),
+    [0, Math.max(1.02, Math.min(1.15, Math.max.apply(null, ys[2].concat([0.95])) + 0.06))]
+  ];
+  const key = ['betaDeg', 'r', 'kappa'];
+  const ylab = ['β [deg]', 'r [rad/s]', 'κ = fx/(μrFzr)'];
+  const infos = [];
+
+  for (let i = 0; i < 3; i++) {
+    const b = subs[i].b;
+    const xt = i === 2 ? niceTicks(xr[0], xr[1], 7) : [];
+    const yt = niceTicks(yr[i][0], yr[i][1], i === 2 ? 4 : 5);
+    const M = drawBox(ctx, b, xr, yr[i], xt, yt,
+      (v) => v.toFixed(1), (v) => i === 2 ? v.toFixed(2) : v.toFixed(i === 0 ? 1 : 2),
+      i === 2 ? 'δ [deg]（左转正）' : '', ylab[i]);
+    infos.push({ b: b, Y: M.Y, key: key[i] });
+
+    // 当前 δ 虚线
+    const cx = M.X(UI.delta * DEG);
+    if (cx > b.x && cx < b.x + b.w) {
+      ctx.setLineDash([3, 4]); ctx.strokeStyle = 'rgba(207,224,238,.35)'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(cx, b.y); ctx.lineTo(cx, b.y + b.h); ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // 两条支路（绿=稳定，红=不稳定；实线=抓地，虚线=漂移）
+    const drawBranch = (list, dashed) => {
+      if (!list || list.length < 2) return;
+      ctx.save();
+      ctx.beginPath(); ctx.rect(b.x + 1, b.y + 1, b.w - 2, b.h - 2); ctx.clip();
+      for (let j = 1; j < list.length; j++) {
+        const p0 = list[j - 1], p1 = list[j];
+        const stable = p0.stable && p1.stable;
+        ctx.strokeStyle = stable ? COL.green : COL.red;
+        ctx.lineWidth = 2.1;
+        ctx.setLineDash(dashed ? [5, 4] : []);
+        ctx.beginPath();
+        ctx.moveTo(M.X(p0.delta * DEG), M.Y(p0[key[i]]));
+        ctx.lineTo(M.X(p1.delta * DEG), M.Y(p1[key[i]]));
+        ctx.stroke();
+      }
+      ctx.setLineDash([]);
+      ctx.restore();
+    };
+    if (br) {
+      drawBranch(br.grip, false);
+      drawBranch(br.drift, true);
+      // 支路端点标注（仅最上面子图）
+      if (i === 0) {
+        if (br.grip.length) {
+          const p = br.grip[br.grip.length - 1];
+          text(ctx, '抓地支路', M.X(p.delta * DEG) - 8, M.Y(p.betaDeg) + 12, COL.green, 'right', 'middle', '10px');
+        }
+        if (br.drift.length) {
+          const p = br.drift[0];
+          text(ctx, '漂移支路', M.X(p.delta * DEG) + 8, M.Y(p.betaDeg) - 10, COL.red, 'left', 'middle', '10px');
+        }
+      }
+    }
+
+    // 当前平衡点
+    if (UI.cur) {
+      const v = i === 0 ? UI.cur.diag.betaDeg : i === 1 ? UI.cur.diag.r : UI.cur.diag.kappa;
+      const px = M.X(UI.delta * DEG), py = M.Y(v);
+      if (px > b.x && px < b.x + b.w) {
+        ctx.fillStyle = COL.bg; ctx.strokeStyle = COL.text; ctx.lineWidth = 1.6;
+        ctx.beginPath(); ctx.arc(px, py, 5.2, 0, 7); ctx.fill(); ctx.stroke();
+        if (i === 0) text(ctx, '当前', px + 8, py - 8, COL.text, 'left', 'middle', '10px');
+      }
+    }
+  }
+
+  text(ctx, '左转约定下抓地支路只存在于 δ>0；漂移支路延伸到 δ<0（需要反打方向）。颜色：绿=稳定，红=不稳定；实线=抓地支路，虚线=漂移支路。',
+    L, h - 14, COL.dim, 'left', 'middle', '10px');
+  text(ctx, '点击曲线可载入平衡点', w - Rm, h - 14, COL.dim, 'right', 'middle', '10px');
+  UI.cinfo = { xr: xr, subs: infos };
+}
+
+// 点击面板 C：载入最近的支路平衡点
+function onCClick(ev) {
+  const info = UI.cinfo;
+  if (!info || !UI.branches) return;
+  const cv = $('cvC');
+  const rect = cv.getBoundingClientRect();
+  const x = ev.clientX - rect.left, y = ev.clientY - rect.top;
+  const si = info.subs.findIndex((s) =>
+    x >= s.b.x - 8 && x <= s.b.x + s.b.w + 8 && y >= s.b.y - 8 && y <= s.b.y + s.b.h + 8);
+  if (si < 0) return;
+  const s = info.subs[si];
+  let best = null, bd = Infinity;
+  for (const item of [{ list: UI.branches.grip, kind: 'grip' }, { list: UI.branches.drift, kind: 'drift' }]) {
+    for (const p of item.list) {
+      const px = s.b.x + (p.delta * DEG - info.xr[0]) / (info.xr[1] - info.xr[0]) * s.b.w;
+      const py = s.Y(p[s.key]);
+      const dd = Math.hypot(px - x, py - y);
+      if (dd < bd) { bd = dd; best = { p: p, kind: item.kind }; }
+    }
+  }
+  if (!best || bd > 80) return;
+  const delta = Math.max(-0.20, Math.min(0.30, Math.round(best.p.delta / 0.005) * 0.005));
+  let eq = trySolve(best.p.z, UI.V, delta);
+  if (!eq) return;
+  UI.delta = delta;
+  const sd = $('sD'); if (sd) sd.value = String(delta);
+  UI.cur = eq;
+  UI.note = '已从面板 C 载入' + (best.kind === 'drift' ? '漂移' : '抓地') + '支路平衡点（δ = ' +
+    fmtNum(delta * DEG, 2) + '°），滑块与初值已同步。';
+  $('inB0').value = (eq.z[0] * DEG).toFixed(2);
+  $('inR0').value = eq.z[1].toFixed(3);
+  $('inF0').value = eq.z[2].toFixed(0);
+  renderReadouts(); drawA(); drawC(); prepNewton(); schedulePhase();
+}
+/* =====================================================================
+ * 面板 D：相平面（(β,r) 投影场 + 三维 RK4 扰动轨迹）
+ * ===================================================================== */
+const PHASE_COLORS = [COL.cyan, COL.pink, COL.yellow, '#a3e635', COL.purple, '#fb923c'];
+
+// 真正的积分（可能较慢，做 60ms 防抖）
+function computePhase() {
+  UI.phaseTimer = null;
+  const cur = UI.cur;
+  if (!cur) { UI.phase = { empty: true }; drawD(); return; }
+  const V = UI.V, delta = UI.delta, d = cur.diag;
+  const fx = cur.z[2], bEq = d.beta, rEq = d.r;
+  // 不稳定时积分更久才能看出缓慢发散；稳定点很快收敛
+  // 不稳定时 Re λ 越大发散越快，积分时长相应缩短，避免轨迹瞬间逃出画面
+  const T = d.is_stable ? 10 : (d.maxRe > 0.25 ? 20 : (d.maxRe > 0.04 ? 60 : 180));
+  const dt = d.is_stable ? 0.02 : Math.max(0.02, T / 1200);
+  // 扰动幅度：稳定点可以给大一点（很快收回）；不稳定点按时间尺度取，避免轨迹过早跑出画面
+  const db = (d.is_stable ? 2.0 : (T > 100 ? 1.8 : 0.6)) / DEG;
+  const dr = d.is_stable ? 0.10 : (T > 100 ? 0.06 : 0.01);
+  const combos = [[db, 0], [-db, 0], [0, dr], [0, -dr], [db, dr], [-db, -dr]];
+  const trajs = [];
+  let bmin = bEq * DEG, bmax = bEq * DEG, rmin = rEq, rmax = rEq;
+  for (let i = 0; i < combos.length; i++) {
+    const b0 = bEq + combos[i][0];
+    const x0 = [V * Math.cos(b0), V * Math.sin(b0), rEq + combos[i][1]];
+    const pts = integratePhase(x0, delta, fx, T, dt, { beta: 1.5, rMin: -1.0, rMax: 9.0, vxMin: 0.2 });
+    trajs.push({ pts: pts, color: PHASE_COLORS[i] });
+    for (const p of pts) {
+      const bd = p[0] * DEG, rr = p[1];
+      if (!isFinite(bd) || !isFinite(rr) || Math.abs(bd) > 82 || rr < -1 || rr > 9) continue;
+      bmin = Math.min(bmin, bd); bmax = Math.max(bmax, bd);
+      rmin = Math.min(rmin, rr); rmax = Math.max(rmax, rr);
+    }
+  }
+  // 显示范围围绕平衡点对称并设上限：强不稳定工况下轨迹很快逃逸，避免坐标轴被拉爆
+  const beqDeg = bEq * DEG;
+  const padB = Math.max(2, Math.max(bmax - beqDeg, beqDeg - bmin) * 0.10);
+  const padR = Math.max(0.10, Math.max(rmax - rEq, rEq - rmin) * 0.10);
+  const halfB = Math.min(22, Math.max(5, Math.max(bmax - beqDeg, beqDeg - bmin) + padB));
+  const halfR = Math.min(1.45, Math.max(0.35, Math.max(rmax - rEq, rEq - rmin) + padR));
+  const xr = [beqDeg - halfB, beqDeg + halfB];
+  const yr = [rEq - halfR, rEq + halfR];
+  UI.phase = { xr: xr, yr: yr, trajs: trajs, eq: { betaDeg: bEq * DEG, r: rEq }, V: V, delta: delta, fx: fx, T: T, d: d };
+  drawD();
+}
+
+function schedulePhase() {
+  if (UI.phaseTimer) clearTimeout(UI.phaseTimer);
+  UI.phase = null;
+  drawD();
+  UI.phaseTimer = setTimeout(computePhase, 60);
+}
+
+function drawD() {
+  const { ctx, w, h } = frame($('cvD'));
+  const ph = UI.phase;
+  if (!UI.cur) { text(ctx, '没有可用的平衡点', w / 2, h / 2, COL.orange, 'center', 'middle', '13px'); return; }
+  if (!ph) {
+    text(ctx, '计算相轨迹中…', w / 2, h / 2, COL.dim, 'center', 'middle', '13px');
+    text(ctx, 'fx 冻结为当前平衡点的后轴驱动力', w / 2, h / 2 + 22, COL.dim, 'center', 'middle', '11px');
+    return;
+  }
+  if (ph.empty) { text(ctx, '没有可用的平衡点', w / 2, h / 2, COL.orange, 'center', 'middle', '13px'); return; }
+  const b = { x: 64, y: 26, w: w - 64 - 20, h: h - 26 - 62 };
+  const xr = ph.xr, yr = ph.yr;
+  const xt = niceTicks(xr[0], xr[1], 6), yt = niceTicks(yr[0], yr[1], 5);
+  const M = drawBox(ctx, b, xr, yr, xt, yt, (v) => v.toFixed(0), (v) => v.toFixed(2), 'β [deg]', 'r [rad/s]');
+  text(ctx, '相平面投影：箭头 = (β̇, ṙ)，轨迹 = 三维动力学 RK4', b.x, 13, COL.text, 'left', 'middle', '11.5px');
+  text(ctx, 'T = ' + ph.T.toFixed(0) + ' s，fx 冻结 = ' + (ph.fx / 1000).toFixed(2) + ' kN',
+    b.x + b.w, 13, COL.dim, 'right', 'middle', '10.5px');
+
+  // 向量场（冻结车速截面）
+  const nx = 21, ny = 14;
+  const cell = Math.min(b.w / (nx - 1), b.h / (ny - 1));
+  for (let iy = 0; iy < ny; iy++) {
+    for (let ix = 0; ix < nx; ix++) {
+      const bd = xr[0] + (xr[1] - xr[0]) * ix / (nx - 1);
+      const rr = yr[0] + (yr[1] - yr[0]) * iy / (ny - 1);
+      const v = phaseVectorField(ph.V, ph.delta, ph.fx, bd / DEG, rr);
+      if (!v || !isFinite(v[0]) || !isFinite(v[1])) continue;
+      const sx = v[0] * DEG * (b.w / (xr[1] - xr[0]));
+      const sy = -v[1] * (b.h / (yr[1] - yr[0]));
+      const m = Math.hypot(sx, sy);
+      if (!(m > 1e-9)) continue;
+      const x = M.X(bd), y = M.Y(rr), len = cell * 0.62;
+      ctx.globalAlpha = 0.5;
+      arrow(ctx, x - sx / m * len * 0.4, y - sy / m * len * 0.4, x + sx / m * len * 0.6, y + sy / m * len * 0.6,
+        'rgba(56,189,248,.55)', 1);
+      ctx.globalAlpha = 1;
+    }
+  }
+
+  // 扰动轨迹
+  ctx.save();
+  ctx.beginPath(); ctx.rect(b.x + 1, b.y + 1, b.w - 2, b.h - 2); ctx.clip();
+  for (const tr of ph.trajs) {
+    const pts = tr.pts;
+    if (!pts || pts.length < 2) continue;
+    const step = Math.max(1, Math.ceil(pts.length / 700));
+    ctx.strokeStyle = tr.color; ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    let started = false;
+    for (let i = 0; i < pts.length; i += step) {
+      const x = M.X(pts[i][0] * DEG), y = M.Y(pts[i][1]);
+      if (!started) { ctx.moveTo(x, y); started = true; } else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    // 起点（受扰初值）
+    ctx.fillStyle = tr.color;
+    ctx.beginPath(); ctx.arc(M.X(pts[0][0] * DEG), M.Y(pts[0][1]), 2.6, 0, 7); ctx.fill();
+    // 终点
+    ctx.strokeStyle = tr.color; ctx.lineWidth = 1.4;
+    ctx.beginPath(); ctx.arc(M.X(pts[pts.length - 1][0] * DEG), M.Y(pts[pts.length - 1][1]), 2.6, 0, 7); ctx.stroke();
+  }
+  ctx.restore();
+
+  // 平衡点：菱形
+  const ex = M.X(ph.eq.betaDeg), ey = M.Y(ph.eq.r);
+  ctx.save();
+  ctx.translate(ex, ey); ctx.rotate(Math.PI / 4);
+  ctx.fillStyle = ph.d.is_stable ? COL.green : COL.red;
+  ctx.strokeStyle = COL.bg; ctx.lineWidth = 1.4;
+  ctx.fillRect(-5, -5, 10, 10); ctx.strokeRect(-5, -5, 10, 10);
+  ctx.restore();
+  text(ctx, '平衡点', ex + 10, ey - 11, ph.d.is_stable ? COL.green : COL.red, 'left', 'middle', '10.5px');
+
+  // 结论说明
+  const msg = ph.d.is_stable
+    ? '扰动轨迹收敛回平衡点 → 稳定（max Re λ = ' + fmtNum(ph.d.maxRe, 4) + ' s⁻¹）'
+    : (ph.d.maxRe > 0.25
+      ? '扰动轨迹迅速向外扩散、离开邻域 → 不稳定（max Re λ = ' + fmtNum(ph.d.maxRe, 4) + ' s⁻¹）'
+      : '扰动轨迹先缓慢向外扩散 → 不稳定（max Re λ = ' + fmtNum(ph.d.maxRe, 4) + ' s⁻¹）');
+  text(ctx, msg, b.x, h - 12, ph.d.is_stable ? COL.green : COL.orange, 'left', 'middle', '11.5px');
+  legend(ctx, b.x + b.w, h - 12, [
+    { color: ph.d.is_stable ? COL.green : COL.red, line: false, label: '平衡点' },
+    { color: COL.cyan, line: true, label: '扰动轨迹' }
+  ]);
+}
+/* ---------- 面板 E：世界坐标漂移轨迹动画 ---------- */
+let _eLast = null;
+function drawE(ts) {
+  const cv = $('cvE');
+  if (!cv) return;
+  const { ctx, w, h } = frame(cv);
+  const cur = UI.cur;
+  if (!cur) {
+    text(ctx, '没有可用的平衡点', w / 2, h / 2, COL.orange, 'center', 'middle', '13px');
+    return;
+  }
+  const V = UI.V;
+  const beta = cur.z[0];          // rad，车身侧偏角
+  const r = cur.z[1];             // rad/s，横摆角速度
+  if (Math.abs(r) < 0.03) {
+    text(ctx, '当前平衡点 r ≈ 0：近似直线行驶，没有漂移圆', w / 2, h / 2 - 8, COL.dim, 'center', 'middle', '12.5px');
+    text(ctx, '请用滑条或按钮载入一个漂移平衡点（r ≈ 0.4~2 rad/s）', w / 2, h / 2 + 16, COL.dim, 'center', 'middle', '11.5px');
+    return;
+  }
+  const R = V / r;                 // 有符号半径
+  const lap = 2 * Math.PI / Math.abs(r);
+  const t = (performance.now() / 1000) % lap;
+  const phi0 = 0.0;
+  const phi = phi0 + r * t;
+  const P = (ph) => [R * (Math.sin(ph) - Math.sin(phi0)), -R * (Math.cos(ph) - Math.cos(phi0))];
+  const psi = phi - beta;          // 车身航向 = 速度方向 - β
+
+  // 坐标范围
+  const C = [-R * Math.sin(phi0), R * Math.cos(phi0)];
+  const pad = Math.abs(R) * 1.35 + 1.2;
+  const xr = [C[0] - pad, C[0] + pad];
+  const yr = [C[1] - pad, C[1] + pad];
+  const b = { x: 52, y: 24, w: w - 52 - 16, h: h - 24 - 52 };
+  const sc = Math.min(b.w / (xr[1] - xr[0]), b.h / (yr[1] - yr[0]));
+  const X = (v) => b.x + b.w / 2 + (v - C[0]) * sc;
+  const Y = (v) => b.y + b.h / 2 - (v - C[1]) * sc;
+  ctx.save();
+  ctx.fillStyle = COL.bg; ctx.fillRect(b.x, b.y, b.w, b.h);
+  ctx.strokeStyle = COL.grid; ctx.lineWidth = 1;
+  ctx.strokeRect(b.x + 0.5, b.y + 0.5, b.w - 1, b.h - 1);
+  ctx.beginPath(); ctx.rect(b.x + 1, b.y + 1, b.w - 2, b.h - 2); ctx.clip();
+
+  // 轨迹圆
+  ctx.strokeStyle = 'rgba(31,111,235,.55)'; ctx.lineWidth = 1.6;
+  ctx.beginPath();
+  for (let i = 0; i <= 240; i++) {
+    const ph = i / 240 * 2 * Math.PI;
+    const p = P(ph);
+    const x = X(p[0]), y = Y(p[1]);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+  // 圆心与半径
+  ctx.setLineDash([4, 4]); ctx.strokeStyle = 'rgba(160,180,200,.45)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(X(C[0]), Y(C[1])); ctx.lineTo(X(P(phi)[0]), Y(P(phi)[1])); ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.strokeStyle = 'rgba(160,180,200,.7)';
+  ctx.beginPath(); ctx.arc(X(C[0]), Y(C[1]), 3.2, 0, 7); ctx.stroke();
+  text(ctx, 'R = ' + Math.abs(R).toFixed(1) + ' m', X(C[0]) + 8, Y(C[1]) - 10, COL.dim, 'left', 'middle', '10.5px');
+
+  // 已走过的轨迹（约 0.7 圈）
+  ctx.strokeStyle = '#5aa2ff'; ctx.lineWidth = 2.6;
+  ctx.beginPath();
+  const nTrail = 160;
+  const t0 = Math.max(0, t - 0.7 * lap);
+  for (let i = 0; i <= nTrail; i++) {
+    const ph2 = phi0 + r * (t0 + (t - t0) * i / nTrail);
+    const p = P(ph2);
+    const x = X(p[0]), y = Y(p[1]);
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.stroke();
+
+  // 车辆
+  const p = P(phi);
+  const px = X(p[0]), py = Y(p[1]);
+  const L = 4.2 * sc, Wd = 1.85 * sc;
+  ctx.save();
+  ctx.translate(px, py); ctx.rotate(-psi);
+  ctx.fillStyle = 'rgba(120,170,240,.30)';
+  ctx.strokeStyle = '#0f2c56'; ctx.lineWidth = 1.4;
+  roundRectPath(ctx, -L / 2, -Wd / 2, L, Wd, 3);
+  ctx.fill(); ctx.stroke();
+  ctx.fillStyle = 'rgba(66,133,244,.55)';
+  roundRectPath(ctx, -L / 2, -Wd / 2, L * 0.30, Wd, 2); ctx.fill();
+  ctx.restore();
+
+  // 速度方向（绿箭）与车身航向（灰虚线），并标出夹角 |β|
+  const vlen = Math.min(0.62 * Math.abs(R), 3.8) * sc;
+  const vxT = px + Math.cos(-phi) * vlen, vyT = py + Math.sin(-phi) * vlen;
+  const hxT = px + Math.cos(-psi) * vlen, hyT = py + Math.sin(-psi) * vlen;
+  arrow(ctx, px, py, vxT, vyT, COL.green, 2.2);
+  ctx.setLineDash([6, 4]); ctx.strokeStyle = '#c3cfdd'; ctx.lineWidth = 1.6;
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(hxT, hyT); ctx.stroke();
+  ctx.setLineDash([]);
+  // 夹角弧（短弧）
+  const arcR = Math.max(0.5, Math.min(1.2, Math.abs(R) * 0.20)) * sc;
+  const a1 = -phi, a2 = -psi;
+  ctx.strokeStyle = COL.cyan; ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(px, py, arcR, Math.min(a1, a2), Math.max(a1, a2), false);
+  ctx.stroke();
+  const mid = 0.5 * (phi + psi);
+  text(ctx, '|β|=' + Math.abs(beta * DEG).toFixed(0) + '°',
+    px + Math.cos(-mid) * (arcR + 16), py + Math.sin(-mid) * (arcR + 16),
+    COL.cyan, 'center', 'middle', '10.5px');
+
+  ctx.restore();
+  // 文本信息
+  text(ctx, 'V = ' + V.toFixed(1) + ' m/s   δ = ' + UI.delta.toFixed(3) + ' rad   β = ' + (beta * DEG).toFixed(1) + '°   r = ' + r.toFixed(2) + ' rad/s',
+    b.x, 13, COL.text, 'left', 'middle', '11px');
+  text(ctx, 't = ' + t.toFixed(1) + ' / ' + lap.toFixed(1) + ' s（一圈）  轨迹半径 R = ' + Math.abs(R).toFixed(2) + ' m   侧偏角 |β| = ' + Math.abs(beta * DEG).toFixed(1) + '°',
+    b.x, h - 14, cur.kind === 'drift' ? COL.orange : COL.green, 'left', 'middle', '11px');
+}
+
+/* =====================================================================
+ * 三、交互绑定与初始化
+ * ===================================================================== */
+// 把面板 B 的三个初值框设为给定值（β 用度）
+function setInitInputs(bDeg, r, f) {
+  $('inB0').value = bDeg.toFixed(2);
+  $('inR0').value = r.toFixed(3);
+  $('inF0').value = f.toFixed(0);
+}
+function randomInit() {
+  setInitInputs(-42 + Math.random() * 45, 0.2 + Math.random() * 1.6, 1000 + Math.random() * 8000);
+  prepNewton();
+  runNewton();
+}
+
+function bindEvents() {
+  $('sV').addEventListener('input', (e) => {
+    UI.V = parseFloat(e.target.value); UI.note = ''; refresh('track');
+  });
+  $('sD').addEventListener('input', (e) => {
+    UI.delta = parseFloat(e.target.value); UI.note = ''; refresh('track');
+  });
+  $('btnGrip').addEventListener('click', () => loadKind('grip'));
+  $('btnDrift').addEventListener('click', () => loadKind('drift'));
+  $('btnDefault').addEventListener('click', () => gotoDefault());
+
+  $('btnRand').addEventListener('click', randomInit);
+  $('btnSeedGrip').addEventListener('click', () => { setInitInputs(0.0, 0.50, 700); prepNewton(); runNewton(); });
+  $('btnSeedDrift').addEventListener('click', () => { setInitInputs(-22.9, 1.20, 7000); prepNewton(); runNewton(); });
+  $('btnStep').addEventListener('click', stepNewton);
+  $('btnRun').addEventListener('click', runNewton);
+  $('btnResetN').addEventListener('click', () => prepNewton());
+  for (const id of ['inB0', 'inR0', 'inF0']) {
+    $(id).addEventListener('change', () => { stopAnim(); prepNewton(); });
+  }
+  $('cvC').addEventListener('click', onCClick);
+
+  let rt = null;
+  window.addEventListener('resize', () => {
+    if (rt) clearTimeout(rt);
+    rt = setTimeout(() => {
+      drawA();
+      if (UI.anim.res) drawB();
+      drawC();
+      drawD();
+      drawE();
+    }, 120);
+  });
+}
+
+function gotoDefault() {
+  UI.V = 8; UI.delta = 0.10;
+  $('sV').value = '8'; $('sD').value = '0.1';
+  ensureBranches();
+  const eq = equilibriumAt(UI.V, UI.delta, 'drift');
+  UI.cur = eq ? currentFrom(eq.z, UI.V, UI.delta) : null;
+  UI.note = '';
+  renderReadouts(); drawA(); drawC(); prepNewton(); schedulePhase();
+}
+
+// 自检明细表
+function chkTableHTML(chk) {
+  const th = (s) => '<th style="text-align:left;padding:4px 6px;border-bottom:1px solid #2c4055;color:#7e93aa;font-weight:600">' + s + '</th>';
+  const td = (s, color) => '<td style="padding:4px 6px;border-bottom:1px solid #131f2b;color:' + (color || '#cfe0ee') + '">' + s + '</td>';
+  let s = '<table style="width:100%;border-collapse:collapse;font-size:11.5px">';
+  s += '<thead><tr>' + ['参考工况', 'β [°]', 'r [rad/s]', 'fx [N]', 'κ', '收敛', '平衡点误差', '特征值误差'].map(th).join('') + '</tr></thead><tbody>';
+  for (const r of chk.rows || []) {
+    const dg = r.diag || {};
+    const errs = r.err ? Object.keys(r.err).filter((k) => k !== 'eig').map((k) => r.err[k]) : [];
+    const eqe = errs.length ? Math.max.apply(null, errs) : 0;
+    const eigE = r.abs && r.abs.eig !== undefined ? fmtE(r.abs.eig) : '—';
+    s += '<tr>' +
+      td(r.name) +
+      td(fmtNum(dg.betaDeg, 4)) +
+      td(fmtNum(dg.r, 4)) +
+      td(fmtNum(dg.fx, 1)) +
+      td(dg.kappa !== null && dg.kappa !== undefined ? fmtNum(dg.kappa, 4) : '—') +
+      td(r.converged ? '✓' : '✗', r.converged ? COL.green : COL.red) +
+      td(fmtE(eqe), eqe < 1e-6 ? COL.green : COL.red) +
+      td(eigE, eigE === '—' ? COL.dim : parseFloat(eigE) < 1e-4 ? COL.green : COL.red) +
+      '</tr>';
+  }
+  s += '</tbody></table>';
+  s += '<div style="margin-top:6px;font-size:11px;color:#7e93aa;line-height:1.6">' +
+    '平衡点误差 = 各量归一化误差 |Δ|/(1+|ref|) 的最大值（要求 &lt; 1e-6）；特征值误差为绝对误差（要求 &lt; 1e-4）。' +
+    '</div>';
+  return s;
+}
+
+function init() {
+  bindEvents();
+  // ---- 自检（隐藏区域 + 顶部徽章）----
+  let chk = null;
+  try {
+    chk = runSelfCheck();
+  } catch (err) {
+    chk = { ok: false, err: String(err && err.message ? err.message : err), eqErr: NaN, eigAbsErr: NaN, rows: [] };
+  }
+  UI.chk = chk;
+  const badge = $('selfcheck');
+  if (badge) {
+    if (chk.ok) {
+      badge.textContent = '✓ 自检通过 · 平衡点归一化误差 ' + fmtE(chk.eqErr) + ' · 特征值绝对误差 ' + fmtE(chk.eigAbsErr);
+      badge.style.color = COL.green;
+      badge.style.background = 'rgba(61,220,132,.12)';
+      badge.style.border = '1px solid rgba(61,220,132,.45)';
+    } else {
+      badge.textContent = '✗ 自检未通过：' + (chk.err || '误差超限（eq=' + fmtE(chk.eqErr) + '，eig=' + fmtE(chk.eigAbsErr) + '）');
+      badge.style.color = COL.red;
+      badge.style.background = 'rgba(255,93,108,.14)';
+      badge.style.border = '1px solid rgba(255,93,108,.5)';
+    }
+  }
+  const tbl = $('checkTable');
+  if (tbl) tbl.innerHTML = chkTableHTML(chk);
+
+  // ---- 默认工况：V = 8 m/s, δ = 0.10 rad 的漂移平衡点 ----
+  UI.V = 8.0; UI.delta = 0.10;
+  $('sV').value = '8';
+  $('sD').value = '0.1';
+  ensureBranches();
+  const eq = equilibriumAt(UI.V, UI.delta, 'drift');
+  UI.cur = eq ? currentFrom(eq.z, UI.V, UI.delta) : null;
+  UI.note = '同一 (V, δ) 同时存在抓地、漂移两个平衡点：面板 B 的初值决定收敛到哪一个。';
+  renderReadouts();
+  drawA();
+  drawC();
+  prepNewton();
+  schedulePhase();
+  // 首次加载自动播放一次迭代动画，方便直接看到路径
+  setTimeout(() => {
+    if (UI.anim.res && !UI.anim.running && UI.anim.shown === 0) runNewton();
+  }, 700);
+  // 面板 E 的稳态漂移轨迹动画
+  const loopE = () => { try { drawE(); } catch (err) { /* 保持其它面板可用 */ } requestAnimationFrame(loopE); };
+  requestAnimationFrame(loopE);
+}
+
+if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+else init();
+</script>
+</body>
+</html>

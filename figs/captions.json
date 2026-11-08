@@ -1,0 +1,57 @@
+{
+ "fig01_model.png": {
+  "caption": "图 1 三自由度单轨模型：几何、状态量与轮胎力",
+  "note": "状态量 z=(β, r, f_x)；V、δ 为给定参数；(a)(b) 共用 a、b、h、t。",
+  "path": "figs\\fig01_model.png"
+ },
+ "fig02_tire.png": {
+  "caption": "图 2 轮胎模型：(a) 前后轴侧向力特性与漂移工作点；(b) 后轴摩擦圆",
+  "note": "漂移平衡点处两轴均已饱和（$|F_y|=M$）；后轴侧向能力被驱动挤占是漂移机理。",
+  "path": "figs\\fig02_tire.png"
+ },
+ "fig03_branches.png": {
+  "caption": "图 3 平衡支路：抓地叶与漂移叶在折叠点相接",
+  "note": "实线为漂移叶，虚线为抓地叶；★ 为鞍结折叠 det J=0。",
+  "path": "figs\\fig03_branches.png"
+ },
+ "fig04_fold.png": {
+  "caption": "图 4 折叠分岔：(a) 存在边界 $\\delta_f(V)$；(b) $(V, \\delta)$ 平面的解个数分区",
+  "note": "解个数由每格 90 个随机初值的多起点求解统计；$\\delta=0$ 一行的 1 解为原地漂移。",
+  "path": "figs\\fig04_fold.png"
+ },
+ "fig05_phase.png": {
+  "caption": "图 5 相平面 $(\\beta,r)$：漂移平衡点开环不稳定、LQR 闭环可镇定",
+  "note": "流线为 $f_x=f_x^{\\rm eq}$、$\\delta=0.10$ rad 时的向量场；初值取 $\\beta+2.5^\\circ$、$r+0.05$ rad/s。",
+  "path": "figs\\fig05_phase.png"
+ },
+ "fig06_merit.png": {
+  "caption": "图 6 非线性最小二乘的几何图像与算法收敛比较",
+  "note": "目标函数取值域 1e-9–10^3；残差曲线来自同一初值与同一容差下的基准测试。",
+  "path": "figs\\fig06_merit.png"
+ },
+ "fig07_design.png": {
+  "caption": "图 7 设计优化：$\\min\\kappa$ s.t. $a_y\\geq a_{y,\\min}$（隐函数消元 + 增广拉格朗日）",
+  "note": "灰色空白为内层平衡点求解失败（设计点不可行）处；κ 关于 a 的单调方向随 μ_r 改变，问题非凸。",
+  "path": "figs\\fig07_design.png"
+ },
+ "fig08_growth.png": {
+  "caption": "图 8 漂移平衡点的开环不稳定增长率与摩擦圆需求随车速变化",
+  "note": "数据取 δ=0.10 rad 的漂移平衡点；增长率均在 V=8 m/s 附近最小，随车速单调增大。",
+  "path": "figs\\fig08_growth.png"
+ },
+ "fig09_basin.png": {
+  "caption": "图 9 阻尼牛顿在 $(\\beta_0,r_0)$ 初值平面上的收敛盆地",
+  "note": "初值 $f_x=0$，网格 61×61；灰白格为不收敛或落到非物理解。",
+  "path": "figs\\fig09_basin.png"
+ },
+ "fig10_convergence.png": {
+  "caption": "图 10 阻尼牛顿法的局部二次收敛性验证",
+  "note": "收敛阶由 log‖e_{k+1}‖ 对 log‖e_k‖ 的最小二乘斜率估计；实际 1.8–2.0，接近理论值 2。",
+  "path": "figs\\fig10_convergence.png"
+ },
+ "fig11_benchmark.png": {
+  "caption": "图 11 七种实现的迭代次数与运行时间对比（5 个工况的中位数）",
+  "note": "A1–A6 为无约束最小二乘；A7 为箱约束投影牛顿；对比使用相同初值与容差。",
+  "path": "figs\\fig11_benchmark.png"
+ }
+}
