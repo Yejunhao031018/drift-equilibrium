@@ -1,0 +1,13 @@
+# 统一行尾，避免 Windows/Linux 协作时整文件 diff
+* text=auto
+
+*.py   text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.json text eol=lf
+*.html text eol=lf
+*.cff  text eol=lf
+
+*.png  binary
+*.gif  binary
+*.npz  binary

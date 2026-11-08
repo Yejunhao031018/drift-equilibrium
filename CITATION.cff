@@ -1,0 +1,27 @@
+cff-version: 1.2.0
+title: "drift-equilibrium: steady-state racing-car drift equilibrium, fold continuation, design optimization and LQR stabilization"
+message: "If you use this code, please cite the repository (and the accompanying course report)."
+type: software
+authors:
+  - family-names: Ye
+    given-names: Junhao
+version: 1.0.0
+date-released: 2026-11-08
+license: MIT
+repository-code: "https://github.com/Yejunhao031018/drift-equilibrium"
+keywords:
+  - racing car
+  - vehicle dynamics
+  - drift equilibrium
+  - nonlinear least squares
+  - continuation
+  - fold bifurcation
+  - augmented Lagrangian
+  - LQR
+abstract: >-
+  Solves the steady-state drifting equilibrium of a three-degree-of-freedom
+  single-track vehicle with brush tires and a rear friction circle, maps the
+  grip and drift branches with pseudo-arclength continuation, locates fold
+  bifurcations with an extended system, optimizes vehicle parameters with an
+  augmented Lagrangian on top of implicit-function reduction, and stabilizes
+  the drift equilibrium with an LQR designed from the linearization.
